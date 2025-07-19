@@ -1,11 +1,10 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useAuth } from '@/contexts/auth-context'
 import { BusinessBrowser } from '@/components/investment/business-browser'
 import { useState, useEffect } from 'react'
-
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
 
 export default function InvestPage() {
   const [mounted, setMounted] = useState(false)

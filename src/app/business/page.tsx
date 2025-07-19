@@ -1,12 +1,11 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useAuth } from '@/contexts/auth-context'
 import { BusinessDashboard } from '@/components/business/business-dashboard'
 import { BusinessRegistrationForm } from '@/components/business/business-registration-form'
 import { useState, useEffect } from 'react'
-
-// Force dynamic rendering
-export const dynamic = 'force-dynamic'
 
 export default function BusinessPage() {
   const [mounted, setMounted] = useState(false)
