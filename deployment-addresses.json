@@ -1,0 +1,9 @@
+{
+  "network": "alfajores",
+  "businessRegistry": "0x485Da32813D1FD0c2a20786a0d3f3d9971444DE2",
+  "investmentPool": "0x107a13040d19aA71a44D2Ef1c925f927fDB13074",
+  "escrowManager": "0xE4CFf87076372D7bCd3d40C79502321eF1A228d7",
+  "cUSDToken": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+  "deployer": "0x900f96DD68CA49001228348f1A2Cd28556FB62dd",
+  "timestamp": "2025-07-19T19:35:22.297Z"
+}
