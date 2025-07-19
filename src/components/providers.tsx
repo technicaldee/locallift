@@ -18,7 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
+  if (!mounted || !config) {
     return <div>{children}</div>
   }
 
