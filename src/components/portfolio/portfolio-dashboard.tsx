@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Investment } from '@/lib/types'
-import { 
-  TrendingUp, 
-  DollarSign, 
+import { getInvestmentsByInvestor } from '@/lib/firebase-services'
+import {
+  TrendingUp,
+  DollarSign,
   PieChart,
   ArrowUpRight,
   Building,
@@ -35,6 +36,7 @@ export function PortfolioDashboard() {
   const [stats, setStats] = useState<PortfolioStats | null>(null)
   const [investments, setInvestments] = useState<InvestmentWithBusiness[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedPeriod, setSelectedPeriod] = useState('6m')
 
   useEffect(() => {
@@ -44,54 +46,55 @@ export function PortfolioDashboard() {
   }, [user])
 
   const fetchPortfolioData = async () => {
+    if (!user) return;
+    setIsLoading(true)
+    setError(null)
     try {
-      const [statsRes, investmentsRes] = await Promise.all([
-        fetch('/api/portfolio/stats', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        }),
-        fetch('/api/portfolio/investments', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        })
-      ])
+      // 1. Fetch investments for the user from Firestore
+      const investmentsData = (await getInvestmentsByInvestor(user.id)) as Investment[]
+      setInvestments(investmentsData as InvestmentWithBusiness[])
 
-      if (statsRes.ok) {
-        const statsData = await statsRes.json()
-        setStats(statsData)
-      }
-
-      if (investmentsRes.ok) {
-        const investmentsData = await investmentsRes.json()
-        setInvestments(investmentsData)
-      }
-    } catch (error) {
-      console.error('Failed to fetch portfolio data:', error)
+      // 2. Aggregate stats
+      const totalInvested = investmentsData.reduce((sum, inv) => sum + inv.amount, 0)
+      const totalReturns = investmentsData.reduce((sum, inv) => sum + (inv.amount * (inv.interestRate / 100) * (inv.duration / 12)), 0)
+      const activeInvestments = investmentsData.filter(inv => inv.status === 'active').length
+      const completedInvestments = investmentsData.filter(inv => inv.status === 'completed').length
+      const averageReturn = investmentsData.length > 0 ? (totalReturns / totalInvested) * 100 : 0
+      const businessesHelped = new Set(investmentsData.map(inv => inv.businessId)).size
+      setStats({ totalInvested, totalReturns, activeInvestments, completedInvestments, averageReturn, businessesHelped })
+    } catch (err) {
+      setError('Failed to load portfolio data')
+      setStats(null)
+      setInvestments([])
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Mock performance data
-  const performanceData = [
-    { month: 'Jan', value: 1000 },
-    { month: 'Feb', value: 1150 },
-    { month: 'Mar', value: 1280 },
-    { month: 'Apr', value: 1420 },
-    { month: 'May', value: 1380 },
-    { month: 'Jun', value: 1650 },
-  ]
+  // Generate real performance data (by month)
+  const performanceData = (() => {
+    if (!investments.length) return [];
+    const monthly: { [key: string]: number } = {};
+    (investments as Investment[]).forEach(inv => {
+      const date = new Date(inv.createdAt)
+      const key = `${date.getFullYear()}-${date.getMonth() + 1}`
+      monthly[key] = (monthly[key] || 0) + inv.amount
+    })
+    return Object.entries(monthly).map(([month, value]) => ({ month, value }))
+  })()
 
-  // Mock allocation data
-  const allocationData = [
-    { name: 'Restaurant', value: 35, color: '#10B981' },
-    { name: 'Services', value: 25, color: '#3B82F6' },
-    { name: 'Retail', value: 20, color: '#8B5CF6' },
-    { name: 'Agriculture', value: 15, color: '#F59E0B' },
-    { name: 'Other', value: 5, color: '#6B7280' },
-  ]
+  // Generate real allocation data (by business type)
+  const allocationData = (() => {
+    if (!investments.length) return [];
+    const byType: { [key: string]: number } = {};
+    (investments as InvestmentWithBusiness[]).forEach(inv => {
+      const type = (inv as any).businessType || 'Other'
+      byType[type] = (byType[type] || 0) + inv.amount
+    })
+    const total = Object.values(byType).reduce((a, b) => a + b, 0)
+    const colors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#6B7280']
+    return Object.entries(byType).map(([name, value], i) => ({ name, value: Math.round((value / total) * 100), color: colors[i % colors.length] }))
+  })()
 
   if (isLoading) {
     return (
@@ -101,10 +104,10 @@ export function PortfolioDashboard() {
     )
   }
 
-  if (!stats) {
+  if (error || !stats) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Failed to load portfolio data</p>
+      <div className="text-center py-12 text-red-600 font-semibold">
+        <p>{error || 'Failed to load portfolio data'}</p>
       </div>
     )
   }
@@ -195,10 +198,10 @@ export function PortfolioDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip formatter={(value) => [`$${value}`, 'Portfolio Value']} />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#10B981" 
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#10B981"
                   strokeWidth={2}
                   dot={{ fill: '#10B981' }}
                 />
@@ -234,8 +237,8 @@ export function PortfolioDashboard() {
             {allocationData.map((item, index) => (
               <div key={index} className="flex items-center justify-between text-sm">
                 <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-2" 
+                  <div
+                    className="w-3 h-3 rounded-full mr-2"
                     style={{ backgroundColor: item.color }}
                   />
                   <span className="text-gray-700">{item.name}</span>
@@ -256,8 +259,8 @@ export function PortfolioDashboard() {
           {investments.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 mb-4">No active investments yet</p>
-              <a 
-                href="/invest" 
+              <a
+                href="/invest"
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
               >
                 Start Investing
@@ -274,15 +277,14 @@ export function PortfolioDashboard() {
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                           {investment.businessType}
                         </span>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          investment.status === 'active' ? 'bg-green-100 text-green-800' :
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${investment.status === 'active' ? 'bg-green-100 text-green-800' :
                           investment.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
+                            'bg-red-100 text-red-800'
+                          }`}>
                           {investment.status}
                         </span>
                       </div>
-                      
+
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
                           <span className="text-gray-600">Invested:</span>
@@ -301,7 +303,7 @@ export function PortfolioDashboard() {
                           <div className="font-medium">{investment.duration} months</div>
                         </div>
                       </div>
-                      
+
                       {investment.status === 'active' && (
                         <div className="mt-3 flex items-center text-sm text-gray-600">
                           <Clock className="w-4 h-4 mr-1" />

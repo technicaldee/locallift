@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Business, FundingRequest } from '@/lib/types'
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Users, 
-  Clock, 
-  CheckCircle, 
+import { getBusinessesByOwner, getFundingRequestsByBusiness } from '@/lib/firebase-services'
+import { getContract } from '@/lib/contracts'
+import {
+  TrendingUp,
+  DollarSign,
+  Users,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Plus,
   Eye
@@ -19,6 +21,7 @@ export function BusinessDashboard() {
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [fundingRequests, setFundingRequests] = useState<FundingRequest[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -27,31 +30,36 @@ export function BusinessDashboard() {
   }, [user])
 
   const fetchBusinessData = async () => {
+    if (!user) return;
+    setIsLoading(true)
+    setError(null)
     try {
-      const [businessesRes, fundingRes] = await Promise.all([
-        fetch('/api/businesses/my-businesses', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        }),
-        fetch('/api/funding-requests/my-requests', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
-          }
-        })
-      ])
+      // 1. Fetch businesses from Firestore
+      const businessesData = await getBusinessesByOwner(user.id)
+      setBusinesses(businessesData as Business[])
 
-      if (businessesRes.ok) {
-        const businessData = await businessesRes.json()
-        setBusinesses(businessData)
+      // 2. Fetch all funding requests for these businesses
+      let allFundingRequests: FundingRequest[] = []
+      for (const business of businessesData as Business[]) {
+        const requests = (await getFundingRequestsByBusiness(business.id)) as FundingRequest[]
+        // 3. Optionally fetch on-chain data for each funding request
+        for (const req of requests) {
+          if (req.poolContractAddress) {
+            try {
+              const contract = await getContract('InvestmentPool', req.poolContractAddress)
+              // You can fetch on-chain state here and merge into req if needed
+            } catch (e) {
+              // Ignore contract errors for now
+            }
+          }
+        }
+        allFundingRequests = allFundingRequests.concat(requests)
       }
-
-      if (fundingRes.ok) {
-        const fundingData = await fundingRes.json()
-        setFundingRequests(fundingData)
-      }
-    } catch (error) {
-      console.error('Failed to fetch business data:', error)
+      setFundingRequests(allFundingRequests)
+    } catch (err) {
+      setError('Failed to load business data')
+      setBusinesses([])
+      setFundingRequests([])
     } finally {
       setIsLoading(false)
     }
@@ -88,6 +96,12 @@ export function BusinessDashboard() {
       <div className="flex items-center justify-center min-h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
       </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-64 text-red-600 font-semibold">{error}</div>
     )
   }
 
@@ -245,8 +259,8 @@ export function BusinessDashboard() {
                         <span>{request.duration} months</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-green-600 h-2 rounded-full" 
+                        <div
+                          className="bg-green-600 h-2 rounded-full"
                           style={{ width: `${(request.currentAmount / request.targetAmount) * 100}%` }}
                         ></div>
                       </div>

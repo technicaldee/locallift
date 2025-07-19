@@ -21,7 +21,22 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "LocalLift - Community Micro-Investment Platform",
   description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
-};
+  icons: [
+    { rel: "icon", url: "/favicon.svg" },
+    { rel: "apple-touch-icon", url: "/favicon.svg" }
+  ],
+  openGraph: {
+    title: "LocalLift - Community Micro-Investment Platform",
+    description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
+    images: ["/favicon.svg"],
+  },
+  twitter: {
+    card: "summary",
+    title: "LocalLift - Community Micro-Investment Platform",
+    description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
+    images: ["/favicon.svg"],
+  }
+}
 
 export default function RootLayout({
   children,
