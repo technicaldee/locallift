@@ -30,40 +30,48 @@ export function BusinessDashboard() {
   }, [user])
 
   const fetchBusinessData = async () => {
-    if (!user) return;
-    setIsLoading(true)
-    setError(null)
+    if (!user) {
+      setError('User not authenticated');
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
     try {
-      // 1. Fetch businesses from Firestore
-      const businessesData = await getBusinessesByOwner(user.id)
-      setBusinesses(businessesData as Business[])
+      console.log('Current user:', user);
+      const businessesData = await getBusinessesByOwner(user.id);
+      console.log('Fetched businesses:', businessesData);
+      setBusinesses(businessesData as Business[]);
 
-      // 2. Fetch all funding requests for these businesses
-      let allFundingRequests: FundingRequest[] = []
+      let allFundingRequests: FundingRequest[] = [];
       for (const business of businessesData as Business[]) {
-        const requests = (await getFundingRequestsByBusiness(business.id)) as FundingRequest[]
-        // 3. Optionally fetch on-chain data for each funding request
+        const requests = (await getFundingRequestsByBusiness(business.id)) as FundingRequest[];
         for (const req of requests) {
           if (req.poolContractAddress) {
             try {
-              const contract = await getContract('InvestmentPool', req.poolContractAddress)
-              // You can fetch on-chain state here and merge into req if needed
+              const contract = await getContract('InvestmentPool', req.poolContractAddress);
+              // Optionally fetch on-chain state here
             } catch (e) {
-              // Ignore contract errors for now
+              console.warn('Contract fetch error:', e);
             }
           }
         }
-        allFundingRequests = allFundingRequests.concat(requests)
+        allFundingRequests = allFundingRequests.concat(requests);
       }
-      setFundingRequests(allFundingRequests)
+      console.log('Fetched funding requests:', allFundingRequests);
+      setFundingRequests(allFundingRequests);
+      if ((businessesData as Business[]).length === 0 && allFundingRequests.length === 0) {
+        setError('No businesses or funding requests found for this user.');
+      }
     } catch (err) {
-      setError('Failed to load business data')
-      setBusinesses([])
-      setFundingRequests([])
+      console.error('BusinessDashboard error:', err);
+      setError('Failed to load business data');
+      setBusinesses([]);
+      setFundingRequests([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
