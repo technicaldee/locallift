@@ -11,11 +11,11 @@ import {
   limit,
   serverTimestamp,
   setDoc,
-  FieldValue
 } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { db, storage } from './firebase'
-import { Business, FundingRequest, RiskAssessment, Investment, User } from './types'
+import { Business, FundingRequest, RiskAssessment, Investment } from './types'
+import { UserProfile } from 'firebase/auth'
 
 // User Profile Services
 export const createUserProfile = async (userId: string, profileData: Record<string, unknown>) => {
@@ -226,7 +226,7 @@ export const createUserFromFarcaster = async (fid: number) => {
   const userRef = doc(collection(db, 'users'))
 
   // Use any type for the Firestore document data to avoid type conflicts
-  const firestoreData: any = {
+  const firestoreData: UserProfile = {
     farcasterFid: fid,
     authProvider: 'farcaster',
     createdAt: serverTimestamp(),
@@ -284,10 +284,10 @@ export const getBusinessesByLocation = async (location: string, limitCount = 20)
     )
     
     querySnapshot = await getDocs(allBusinessesQuery)
-    const allBusinesses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    const allBusinesses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Business[]
     
     // Filter for partial matches in city or country
-    results = allBusinesses.filter((business: any) => {
+    results = allBusinesses.filter((business) => {
       const city = business.location?.city?.toLowerCase() || ''
       const country = business.location?.country?.toLowerCase() || ''
       const searchTerm = location.toLowerCase()
@@ -346,12 +346,12 @@ export const getFilteredBusinesses = async (filters: {
   
   // Execute query
   const querySnapshot = await getDocs(baseQuery)
-  let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  let results = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Business[]
   
   // Filter by location if provided (client-side filtering)
   if (filters.location) {
     const locationLower = filters.location.toLowerCase()
-    results = results.filter((business: any) => {
+    results = results.filter((business) => {
       const city = business.location?.city?.toLowerCase() || ''
       const country = business.location?.country?.toLowerCase() || ''
       
@@ -362,11 +362,11 @@ export const getFilteredBusinesses = async (filters: {
   // For risk score filtering, we need to get risk assessments separately
   if (filters.riskScore !== undefined) {
     // Get risk assessments for all businesses
-    const riskAssessments = await Promise.all(
-      results.map(async (business: any) => {
-        return await getRiskAssessment(business.id)
-      })
-    )
+    // const riskAssessments = await Promise.all(
+    //   results.map(async (business: any) => {
+    //     return await getRiskAssessment(business.id)
+    //   })
+    // )
     
     // Filter businesses based on risk score
     results = results

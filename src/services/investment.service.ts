@@ -3,7 +3,7 @@ import { collection, addDoc, getDocs, query, where, orderBy } from 'firebase/fir
 import { Investment } from '@/lib/types';
 import { getContract } from '@/lib/contracts';
 import { parseEther } from 'viem';
-import { getDivviReferralTag, submitDivviReferral } from '../lib/utils';
+// import { getDivviReferralTag, submitDivviReferral } from '../lib/utils';
 
 /**
  * Service for investment-related operations using Firebase and smart contracts

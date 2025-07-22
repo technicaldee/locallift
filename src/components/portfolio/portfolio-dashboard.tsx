@@ -40,10 +40,6 @@ export function PortfolioDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState('6m')
 
   useEffect(() => {
-    if (user) {
-      fetchPortfolioData()
-    }
-  }, [user])
 
   const fetchPortfolioData = async () => {
     if (!user) return;
@@ -63,6 +59,7 @@ export function PortfolioDashboard() {
       const businessesHelped = new Set(investmentsData.map(inv => inv.businessId)).size
       setStats({ totalInvested, totalReturns, activeInvestments, completedInvestments, averageReturn, businessesHelped })
     } catch (err) {
+      console.log(err)
       setError('Failed to load portfolio data')
       setStats(null)
       setInvestments([])
@@ -70,6 +67,11 @@ export function PortfolioDashboard() {
       setIsLoading(false)
     }
   }
+    if (user) {
+      fetchPortfolioData()
+    }
+  }, [user])
+
 
   // Generate real performance data (by month)
   const performanceData = (() => {
@@ -88,7 +90,7 @@ export function PortfolioDashboard() {
     if (!investments.length) return [];
     const byType: { [key: string]: number } = {};
     (investments as InvestmentWithBusiness[]).forEach(inv => {
-      const type = (inv as any).businessType || 'Other'
+      const type = (inv as InvestmentWithBusiness).businessType || 'Other'
       byType[type] = (byType[type] || 0) + inv.amount
     })
     const total = Object.values(byType).reduce((a, b) => a + b, 0)

@@ -36,6 +36,7 @@ export function InvestmentModal({
 
   // Generate Divvi referral tag for this user
   const referralTag = address ? getDivviReferralTag(address) : undefined;
+  console.log(referralTag)
 
   const handleInvestmentSuccess = async (txHash: string) => {
     try {

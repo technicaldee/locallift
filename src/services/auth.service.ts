@@ -109,8 +109,8 @@ export const AuthService = {
       console.error('Error updating user profile:', error);
       throw new Error('Failed to update profile');
     }
-  }
-};  /**
+  },
+  /**
 
    * Sign in with Farcaster
    */

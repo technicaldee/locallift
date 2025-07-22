@@ -54,3 +54,15 @@ export function generateNonce(): string {
   return Math.random().toString(36).substring(2, 15) + 
          Math.random().toString(36).substring(2, 15)
 }
+
+export async function createUserSession(user: UserProfile): Promise<{ token: string }> {
+  // Create a JWT token with user information
+  const token = await signToken({
+    userId: user.id,
+    address: user.walletAddress || null,
+    role: user.role || 'investor',
+    fid: null
+  })
+  
+  return { token }
+}

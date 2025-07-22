@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/auth-context'
 import { Business, FundingRequest } from '@/lib/types'
 import { getBusinessesByOwner, getFundingRequestsByBusiness } from '@/lib/firebase-services'
-import { getContract } from '@/lib/contracts'
+// import { getContract } from '@/lib/contracts'
 import {
   TrendingUp,
   DollarSign,
@@ -24,10 +24,6 @@ export function BusinessDashboard() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (user) {
-      fetchBusinessData()
-    }
-  }, [user])
 
   const fetchBusinessData = async () => {
     if (!user) {
@@ -49,7 +45,7 @@ export function BusinessDashboard() {
         for (const req of requests) {
           if (req.poolContractAddress) {
             try {
-              const contract = await getContract('InvestmentPool', req.poolContractAddress);
+              // const contract = await getContract('InvestmentPool', req.poolContractAddress);
               // Optionally fetch on-chain state here
             } catch (e) {
               console.warn('Contract fetch error:', e);
@@ -72,6 +68,11 @@ export function BusinessDashboard() {
       setIsLoading(false);
     }
   };
+    if (user) {
+      fetchBusinessData()
+    }
+  }, [user])
+
 
   const getStatusIcon = (status: string) => {
     switch (status) {

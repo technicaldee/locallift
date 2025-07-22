@@ -2,17 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { sdk } from '@farcaster/miniapp-sdk'
-import { useAuth } from '@/hooks/use-auth'
+import { useAuth } from '@/contexts/auth-context'
 
 export function FarcasterAuth() {
   const [isInMiniApp, setIsInMiniApp] = useState<boolean | null>(null)
-  const { user, login } = useAuth()
+  const { user, signIn } = useAuth()
 
   useEffect(() => {
     const checkFarcaster = async () => {
       try {
         const inMiniApp = await sdk.isInMiniApp()
         setIsInMiniApp(inMiniApp)
+        console.log(isInMiniApp)
         
         if (inMiniApp && !user) {
           // Get capabilities to check if signIn is supported
@@ -45,7 +46,7 @@ export function FarcasterAuth() {
                 if (response.ok) {
                   const data = await response.json()
                   // Use your existing auth system to log in the user
-                  login(data.token)
+                  signIn(data.token)
                 }
               }
             } catch (error) {
@@ -61,7 +62,7 @@ export function FarcasterAuth() {
     }
     
     checkFarcaster()
-  }, [user, login])
+  }, [user, signIn, isInMiniApp])
 
   // This component doesn't render anything, it just handles auth
   return null

@@ -3,32 +3,32 @@
 import { useAuth } from '@/contexts/auth-context'
 import { PortfolioDashboard } from '@/components/portfolio/portfolio-dashboard'
 import { useState, useEffect } from 'react'
-import { Metadata } from 'next'
-import { generateFarcasterEmbed } from '@/lib/farcaster-utils'
+// import { Metadata } from 'next'
+// import { generateFarcasterEmbed } from '@/lib/farcaster-utils'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
 
 // Generate metadata for this page
-export const generateMetadata = (): Metadata => {
-  const title = "LocalLift - Investment Portfolio"
-  const description = "Track and manage your investments in local businesses"
+// export const generateMetadata = (): Metadata => {
+//   const title = "LocalLift - Investment Portfolio"
+//   const description = "Track and manage your investments in local businesses"
   
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: ["/portfolio-dashboard.png"],
-    },
-    other: generateFarcasterEmbed({
-      imageUrl: "https://locallift.xyz/portfolio-dashboard.png",
-      buttonTitle: "View Portfolio",
-      targetUrl: "https://locallift.xyz/portfolio"
-    })
-  }
-}
+//   return {
+//     title,
+//     description,
+//     openGraph: {
+//       title,
+//       description,
+//       images: ["/portfolio-dashboard.png"],
+//     },
+//     other: generateFarcasterEmbed({
+//       imageUrl: "https://locallift.xyz/portfolio-dashboard.png",
+//       buttonTitle: "View Portfolio",
+//       targetUrl: "https://locallift.xyz/portfolio"
+//     })
+//   }
+// }
 
 export default function PortfolioPage() {
   const [mounted, setMounted] = useState(false)
