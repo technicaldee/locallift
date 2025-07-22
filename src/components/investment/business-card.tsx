@@ -1,8 +1,9 @@
 'use client'
 
 import { Business, FundingRequest, RiskAssessment } from '@/lib/types'
-import { MapPin, DollarSign, TrendingUp, Users, Clock, Shield } from 'lucide-react'
+import { MapPin, DollarSign, TrendingUp, Users, Clock, Shield, Share2 } from 'lucide-react'
 import { RISK_RANGES } from '@/lib/constants'
+import { FarcasterShareButton } from '@/components/farcaster/share-button'
 
 interface BusinessCardProps {
   business: Business
@@ -127,7 +128,7 @@ export function BusinessCard({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex space-x-3">
+        <div className="flex space-x-3 mb-3">
           <button
             onClick={onViewDetails}
             className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors font-medium"
@@ -142,6 +143,16 @@ export function BusinessCard({
             Invest Now
           </button>
         </div>
+        
+        {/* Share Button */}
+        <FarcasterShareButton 
+          text={`Check out ${business.name} on LocalLift! They're raising $${fundingRequest.targetAmount.toLocaleString()} for ${fundingRequest.purpose}.`}
+          url={`https://locallift.xyz/invest?business=${business.id}`}
+          className="w-full flex items-center justify-center border border-purple-300 text-purple-700 py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors font-medium"
+        >
+          <Share2 className="w-4 h-4 mr-2" />
+          Share on Farcaster
+        </FarcasterShareButton>
       </div>
     </div>
   )

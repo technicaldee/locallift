@@ -110,4 +110,47 @@ export const AuthService = {
       throw new Error('Failed to update profile');
     }
   }
+};  /**
+
+   * Sign in with Farcaster
+   */
+  async signInWithFarcaster(message: string, signature: string): Promise<{ token: string; user: UserProfile }> {
+    try {
+      const response = await fetch('/api/auth/farcaster-signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, signature })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Farcaster authentication failed');
+      }
+      
+      const { token, user } = await response.json();
+      
+      // Sign in to Firebase with the custom token
+      await signInWithCustomToken(auth, token);
+      
+      return { token, user };
+    } catch (error) {
+      console.error('Error signing in with Farcaster:', error);
+      throw new Error('Farcaster authentication failed');
+    }
+  },
+  
+  /**
+   * Link wallet address to Farcaster user
+   */
+  async linkWalletToFarcaster(userId: string, walletAddress: string): Promise<void> {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        walletAddress: walletAddress.toLowerCase(),
+        updatedAt: new Date()
+      });
+    } catch (error) {
+      console.error('Error linking wallet to Farcaster user:', error);
+      throw new Error('Failed to link wallet');
+    }
+  }
 };

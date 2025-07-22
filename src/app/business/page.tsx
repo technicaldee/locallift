@@ -6,6 +6,29 @@ import { useAuth } from '@/contexts/auth-context'
 import { BusinessDashboard } from '@/components/business/business-dashboard'
 import { BusinessRegistrationForm } from '@/components/business/business-registration-form'
 import { useState, useEffect } from 'react'
+import { Metadata } from 'next'
+import { generateFarcasterEmbed } from '@/lib/farcaster-utils'
+
+// Generate metadata for this page
+export const generateMetadata = (): Metadata => {
+  const title = "LocalLift - Business Dashboard"
+  const description = "Manage your business and funding requests on LocalLift"
+  
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: ["/business-dashboard.png"],
+    },
+    other: generateFarcasterEmbed({
+      imageUrl: "https://locallift.xyz/business-dashboard.png",
+      buttonTitle: "Open Business Dashboard",
+      targetUrl: "https://locallift.xyz/business"
+    })
+  }
+}
 
 export default function BusinessPage() {
   const [mounted, setMounted] = useState(false)

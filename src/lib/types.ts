@@ -71,3 +71,30 @@ export interface FundingRequest {
   createdAt: Date
   updatedAt: Date
 }
+
+import { FieldValue } from 'firebase/firestore'
+
+export interface User {
+  id: string
+  email: string | null
+  displayName: string
+  walletAddress: string | null
+  authProvider: 'email' | 'wallet' | 'farcaster'
+  farcasterFid?: number
+  farcasterUsername?: string
+  profileImageUrl?: string
+  createdAt: Date | FieldValue
+  updatedAt: Date | FieldValue
+}
+
+export interface FarcasterUser {
+  fid: number
+  username?: string
+  displayName?: string
+  pfpUrl?: string
+}
+
+export interface FarcasterSignInResult {
+  message: string
+  signature: string
+}

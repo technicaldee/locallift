@@ -35,6 +35,37 @@ export const metadata: Metadata = {
     title: "LocalLift - Community Micro-Investment Platform",
     description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
     images: ["/favicon.svg"],
+  },
+  other: {
+    "fc:miniapp": JSON.stringify({
+      version: "1",
+      imageUrl: "https://locallift.xyz/og-image.png",
+      button: {
+        title: "Open LocalLift",
+        action: {
+          type: "launch_miniapp",
+          name: "LocalLift",
+          url: "https://locallift.xyz",
+          splashImageUrl: "https://locallift.xyz/logo.png",
+          splashBackgroundColor: "#0f172a"
+        }
+      }
+    }),
+    // For backward compatibility
+    "fc:frame": JSON.stringify({
+      version: "1",
+      imageUrl: "https://locallift.xyz/og-image.png",
+      button: {
+        title: "Open LocalLift",
+        action: {
+          type: "launch_frame",
+          name: "LocalLift",
+          url: "https://locallift.xyz",
+          splashImageUrl: "https://locallift.xyz/logo.png",
+          splashBackgroundColor: "#0f172a"
+        }
+      }
+    })
   }
 }
 

@@ -1,0 +1,25 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "LocalLift",
+    "iconUrl": "https://locallift.xyz/logo.png",
+    "homeUrl": "https://locallift.xyz",
+    "imageUrl": "https://locallift.xyz/og-image.png",
+    "buttonTitle": "Open LocalLift",
+    "splashImageUrl": "https://locallift.xyz/logo.png",
+    "splashBackgroundColor": "#0f172a",
+    "description": "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
+    "primaryCategory": "finance",
+    "tags": [
+      "investment",
+      "local",
+      "business",
+      "blockchain",
+      "celo"
+    ],
+    "requiredCapabilities": [
+      "actions.signIn",
+      "wallet.getEthereumProvider"
+    ]
+  }
+}

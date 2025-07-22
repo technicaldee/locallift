@@ -20,6 +20,24 @@ const nextConfig = {
   // Disable static optimization for pages that use wallet connections
   experimental: {
     esmExternals: 'loose'
+  },
+  // Add headers for Farcaster Mini App
+  async headers() {
+    return [
+      {
+        source: '/.well-known/farcaster.json',
+        headers: [
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Content-Type',
+            value: 'application/json',
+          },
+        ],
+      },
+    ]
   }
 }
 

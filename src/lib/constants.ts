@@ -36,3 +36,5 @@ export const BUSINESS_CATEGORIES = [
   'Education',
   'Other',
 ] as const
+
+export const DIVVI_CONSUMER_ADDRESS = "0xf13dc3f7f6265e3bddcd07b3870e751dc3c3e026";

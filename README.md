@@ -212,4 +212,49 @@ For support and questions:
 - [ ] Multi-language support
 - [ ] Integration with more blockchains
 - [ ] Advanced analytics dashboard
-- [ ] Community governance features
+- [ ] Community governance features## Farcas
+ter Integration
+
+LocalLift is now integrated with Farcaster as a Mini App, allowing users to interact with the platform directly from Farcaster clients.
+
+### Farcaster Features
+
+- **Authentication**: Sign in with Farcaster using Quick Auth
+- **Sharing**: Share investment opportunities on Farcaster
+- **Embeds**: Rich embeds for sharing pages in Farcaster feeds
+- **Wallet Integration**: Use Farcaster wallet for transactions
+
+### Farcaster Setup
+
+1. Update `.env.local` with your Farcaster developer FID and mnemonic:
+```
+NEXT_PUBLIC_APP_DOMAIN=locallift.xyz
+FARCASTER_DEVELOPER_FID=your-fid
+FARCASTER_DEVELOPER_MNEMONIC=your-mnemonic
+```
+
+2. Sign your manifest using the [Farcaster Mini App Manifest Tool](https://farcaster.xyz/~/developers/mini-apps/manifest)
+
+3. Update the manifest in `public/.well-known/farcaster.json` with the signed account association
+
+### Testing as a Mini App
+
+1. Use the [Mini App Debug Tool](https://farcaster.xyz/~/developers/mini-apps/debug) to preview your app
+2. Enter your app URL and click "Preview"
+
+### Sharing on Farcaster
+
+Use the `FarcasterShareButton` component to enable sharing:
+
+```jsx
+import { FarcasterShareButton } from '@/components/farcaster/share-button'
+
+<FarcasterShareButton 
+  text="Check out this investment opportunity!"
+  url="https://locallift.xyz/invest?business=123"
+/>
+```
+
+### Farcaster Authentication
+
+The app automatically detects when it's running as a Mini App and enables Farcaster authentication.

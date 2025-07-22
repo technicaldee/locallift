@@ -7,6 +7,8 @@ import { config } from '@/lib/wagmi'
 import { useState } from 'react'
 import { AuthProvider } from '@/contexts/auth-context'
 import { ErrorBoundary } from './error-boundary'
+import { FarcasterProvider } from './farcaster/farcaster-provider'
+import { FarcasterAuth } from './farcaster/farcaster-auth'
 
 import '@rainbow-me/rainbowkit/styles.css'
 
@@ -21,7 +23,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
             <AuthProvider>
-              {children}
+              <FarcasterProvider>
+                <FarcasterAuth />
+                {children}
+              </FarcasterProvider>
             </AuthProvider>
           </RainbowKitProvider>
         </QueryClientProvider>

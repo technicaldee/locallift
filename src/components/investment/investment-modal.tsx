@@ -7,6 +7,7 @@ import { Business, FundingRequest, RiskAssessment } from '@/lib/types'
 import { TOKEN_ADDRESSES, PLATFORM_CONFIG } from '@/lib/constants'
 import { celo } from 'wagmi/chains'
 import { X, DollarSign, TrendingUp, Shield, AlertTriangle } from 'lucide-react'
+import { getDivviReferralTag } from '@/lib/utils';
 
 interface InvestmentModalProps {
   isOpen: boolean
@@ -28,10 +29,13 @@ export function InvestmentModal({
   const [investmentAmount, setInvestmentAmount] = useState<number>(5)
   const [showPaymentDialog, setShowPaymentDialog] = useState(false)
   const [agreedToTerms, setAgreedToTerms] = useState(false)
-  
-  const { } = useAccount()
+
+  const { address } = useAccount();
 
   if (!isOpen) return null
+
+  // Generate Divvi referral tag for this user
+  const referralTag = address ? getDivviReferralTag(address) : undefined;
 
   const handleInvestmentSuccess = async (txHash: string) => {
     try {
@@ -125,10 +129,9 @@ export function InvestmentModal({
                   <div className="space-y-1">
                     {riskAssessment.riskFactors.slice(0, 3).map((factor, index) => (
                       <div key={index} className="flex items-center text-xs">
-                        <div className={`w-2 h-2 rounded-full mr-2 ${
-                          factor.impact === 'positive' ? 'bg-green-400' :
-                          factor.impact === 'negative' ? 'bg-red-400' : 'bg-gray-400'
-                        }`} />
+                        <div className={`w-2 h-2 rounded-full mr-2 ${factor.impact === 'positive' ? 'bg-green-400' :
+                            factor.impact === 'negative' ? 'bg-red-400' : 'bg-gray-400'
+                          }`} />
                         <span className="text-blue-800">{factor.factor}</span>
                       </div>
                     ))}
@@ -239,7 +242,7 @@ export function InvestmentModal({
             >
               Cancel
             </button>
-            
+
             <Payment
               amount={investmentAmount.toString()}
               tokenAddress={TOKEN_ADDRESSES.cUSD}
@@ -247,6 +250,7 @@ export function InvestmentModal({
               chain={celo}
               onSuccess={handleInvestmentSuccess}
               onError={handleInvestmentError}
+            // TODO: Pass referralTag to the transaction if Payment component supports custom data/callData
             >
               <button
                 onClick={() => setShowPaymentDialog(true)}
@@ -255,7 +259,7 @@ export function InvestmentModal({
               >
                 Invest ${investmentAmount.toFixed(2)}
               </button>
-              
+
               <PaymentDialog
                 open={showPaymentDialog}
                 onOpenChange={setShowPaymentDialog}

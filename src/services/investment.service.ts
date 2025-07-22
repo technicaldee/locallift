@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs, query, where, orderBy } from 'firebase/fir
 import { Investment } from '@/lib/types';
 import { getContract } from '@/lib/contracts';
 import { parseEther } from 'viem';
+import { getDivviReferralTag, submitDivviReferral } from '../lib/utils';
 
 /**
  * Service for investment-related operations using Firebase and smart contracts
@@ -23,13 +24,13 @@ export const InvestmentService = {
     try {
       // 1. Execute blockchain transaction
       const investmentPoolContract = await getContract('InvestmentPool', poolContractAddress);
-      
+
       // Convert amount to wei (ethers)
       const amountInWei = parseEther(amount.toString());
-      
+
       // Call the contract's invest function
       const tx = await investmentPoolContract.write.invest([poolId, amountInWei]);
-      
+
       // 2. Store investment record in Firebase
       const investmentData = {
         investorId,
@@ -43,9 +44,9 @@ export const InvestmentService = {
         contractAddress: poolContractAddress,
         createdAt: new Date()
       };
-      
+
       const investmentRef = await addDoc(collection(db, 'investments'), investmentData);
-      
+
       return {
         transactionHash: tx,
         investmentId: investmentRef.id
@@ -55,7 +56,7 @@ export const InvestmentService = {
       throw new Error('Failed to make investment');
     }
   },
-  
+
   /**
    * Get investments for an investor
    */
@@ -66,7 +67,7 @@ export const InvestmentService = {
         where('investorId', '==', investorId),
         orderBy('createdAt', 'desc')
       );
-      
+
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
@@ -77,25 +78,25 @@ export const InvestmentService = {
       return [];
     }
   },
-  
+
   /**
    * Get portfolio statistics
    */
   async getPortfolioStats(investorId: string) {
     try {
       const investments = await this.getInvestorInvestments(investorId);
-      
+
       // Calculate statistics
       const totalInvested = investments.reduce((sum, inv) => sum + inv.amount, 0);
       const activeInvestments = investments.filter(inv => inv.status === 'active').length;
       const completedInvestments = investments.filter(inv => inv.status === 'completed').length;
-      
+
       // Calculate expected returns
       const totalExpectedReturns = investments.reduce((sum, inv) => {
         const expectedReturn = inv.amount * (1 + (inv.interestRate / 100) * (inv.duration / 12));
         return sum + (expectedReturn - inv.amount);
       }, 0);
-      
+
       const averageReturn = totalInvested > 0 ? (totalExpectedReturns / totalInvested) * 100 : 0;
       const uniqueBusinesses = new Set(investments.map(inv => inv.businessId)).size;
 
