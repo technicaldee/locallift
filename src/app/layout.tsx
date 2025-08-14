@@ -1,73 +1,57 @@
-export const dynamic = 'force-dynamic'
-
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
-import { Navbar } from "@/components/navbar";
-import { ClientOnly } from "@/components/client-only";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "LocalLift - Community Micro-Investment Platform",
-  description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
-  icons: [
-    { rel: "icon", url: "/favicon.svg" },
-    { rel: "apple-touch-icon", url: "/favicon.svg" }
-  ],
+  title: "Swipevest - Swipe. Invest. Earn.",
+  description: "Discover and invest in local businesses with a simple swipe. Join the community of investors supporting entrepreneurs.",
+  keywords: "investment, business, startup, funding, swipe, local business",
+  authors: [{ name: "Swipevest" }],
+  creator: "Swipevest",
+  publisher: "Swipevest",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
+  themeColor: "#ec4899",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
-    title: "LocalLift - Community Micro-Investment Platform",
-    description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
-    images: ["/favicon.svg"],
+    title: "Swipevest - Swipe. Invest. Earn.",
+    description: "Discover and invest in local businesses with a simple swipe.",
+    url: "https://swipevest.site",
+    siteName: "Swipevest",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Swipevest - Investment Platform",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
-    card: "summary",
-    title: "LocalLift - Community Micro-Investment Platform",
-    description: "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
-    images: ["/favicon.svg"],
+    card: "summary_large_image",
+    title: "Swipevest - Swipe. Invest. Earn.",
+    description: "Discover and invest in local businesses with a simple swipe.",
+    images: ["/og-image..png"],
   },
-  other: {
-    "fc:miniapp": JSON.stringify({
-      version: "1",
-      imageUrl: "https://locallift.xyz/og-image.png",
-      button: {
-        title: "Open LocalLift",
-        action: {
-          type: "launch_miniapp",
-          name: "LocalLift",
-          url: "https://locallift.xyz",
-          splashImageUrl: "https://locallift.xyz/logo.png",
-          splashBackgroundColor: "#0f172a"
-        }
-      }
-    }),
-    // For backward compatibility
-    "fc:frame": JSON.stringify({
-      version: "1",
-      imageUrl: "https://locallift.xyz/og-image.png",
-      button: {
-        title: "Open LocalLift",
-        action: {
-          type: "launch_frame",
-          name: "LocalLift",
-          url: "https://locallift.xyz",
-          splashImageUrl: "https://locallift.xyz/logo.png",
-          splashBackgroundColor: "#0f172a"
-        }
-      }
-    })
-  }
-}
+};
 
 export default function RootLayout({
   children,
@@ -76,15 +60,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ClientOnly>
-          <Providers>
-            <Navbar />
-            {children}
-          </Providers>
-        </ClientOnly>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <meta name="theme-color" content="#ec4899" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

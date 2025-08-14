@@ -1,191 +1,118 @@
-# LocalLift Platform
+# Swipevest 🚀
 
-A decentralized platform for local business investment using Celo blockchain and Firebase.
+**Swipe. Invest. Earn.** - A Tinder-like investment platform for local businesses built for Farcaster.
 
 ## Features
 
-- **Business Registration**: Local businesses can register and get verified
-- **Investment Opportunities**: Browse and invest in local businesses
-- **Smart Contracts**: Secure investment pools with milestone-based fund release
-- **Portfolio Management**: Track your investments and returns
-- **Risk Assessment**: AI-powered risk analysis for investment decisions
+- 📱 **Mobile-First Design** - Optimized for Farcaster's mobile viewing area
+- 💳 **Swipe to Invest** - Intuitive swipe interface for discovering businesses
+- 🏆 **Leaderboard** - Track top investors and earnings
+- 📊 **Investment History** - View your portfolio and returns
+- 🏢 **Business Dashboard** - Business owners can create and manage their profiles
+- ✅ **Community Verification** - Users can verify businesses by uploading photos
+- 💬 **Comments** - Discuss businesses with other investors
+- 🔥 **Firebase Integration** - Real-time data with Firestore and Storage
+- 🎯 **Farcaster Native** - Built with Farcaster SDK and APIs
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Blockchain**: Celo (Alfajores Testnet), Solidity, Hardhat
-- **Database**: Firebase Firestore
-- **Storage**: Firebase Storage
-- **Authentication**: Wallet-based auth with Firebase
-- **UI Components**: Composer Kit UI
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui components
+- **Backend**: Firebase (Firestore, Storage, Auth)
+- **Animations**: Framer Motion
+- **Social**: Farcaster SDK
+- **Deployment**: Vercel (recommended)
 
 ## Setup Instructions
-
-### Prerequisites
-
-- Node.js 18+ and yarn
-- A Celo wallet with Alfajores testnet tokens
-- Firebase project setup
 
 ### 1. Clone and Install
 
 ```bash
-git clone <repository-url>
-cd locallift-platform
-yarn install
+git clone <your-repo>
+cd swipevest
+npm install
 ```
 
-### 2. Environment Setup
+### 2. Firebase Setup
 
-Copy `.env.local` and update with your values:
-
-```bash
-cp .env.local.example .env.local
-```
-
-Update the following variables:
-- Firebase configuration
-- Private key for contract deployment
-- JWT secret for authentication
-
-### 3. Firebase Setup
-
-1. Create a Firebase project at https://console.firebase.google.com
+1. Create a new Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
 2. Enable Firestore Database
 3. Enable Storage
-4. Enable Authentication
-5. Update Firebase config in `.env.local`
+4. Get your Firebase config from Project Settings
+5. Update `.env` with your Firebase credentials:
 
-### 4. Smart Contract Deployment
+```env
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+```
 
-Compile contracts:
+### 3. Farcaster Setup
+
+1. Register your app at [developers.farcaster.xyz](https://developers.farcaster.xyz)
+2. Add your Farcaster App ID to `.env`:
+
+```env
+NEXT_PUBLIC_FARCASTER_APP_ID=your_farcaster_app_id
+```
+
+### 4. Run Development Server
+
 ```bash
-yarn compile
+npm run dev
 ```
 
-Deploy to Celo Alfajores:
-```bash
-yarn deploy
-```
-
-Update `.env.local` with the deployed contract addresses.
-
-Verify contracts (optional):
-```bash
-yarn verify
-```
-
-### 5. Run the Application
-
-```bash
-yarn dev
-```
-
-Visit http://localhost:3000
-
-## Project Structure
-
-```
-locallift-platform/
-├── contracts/                 # Solidity smart contracts
-│   ├── BusinessRegistry.sol
-│   ├── InvestmentPool.sol
-│   └── EscrowManager.sol
-├── src/
-│   ├── app/                  # Next.js app router
-│   ├── components/           # React components
-│   ├── lib/                  # Utilities and configurations
-│   ├── services/             # Firebase and blockchain services
-│   └── hooks/                # Custom React hooks
-├── scripts/                  # Deployment scripts
-└── public/                   # Static assets
-```
-
-## Smart Contracts
-
-### BusinessRegistry
-- Register and verify local businesses
-- Store business metadata and verification status
-- Track business statistics
-
-### InvestmentPool
-- Create investment pools for businesses
-- Handle investments and fund distribution
-- Manage milestone-based fund release
-- Process repayments to investors
-
-### EscrowManager
-- Secure escrow for transactions
-- Release funds based on conditions
-- Handle disputes and refunds
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/signin` - Wallet-based authentication
-- `GET /api/auth/profile` - Get user profile
-
-### Business Management
-- `POST /api/businesses/register` - Register a business
-- `GET /api/businesses/my-businesses` - Get user's businesses
-
-### Investment
-- `GET /api/investment/opportunities` - Get investment opportunities
-- `POST /api/investment/invest` - Make an investment
-- `GET /api/portfolio/stats` - Get portfolio statistics
-- `GET /api/portfolio/investments` - Get user's investments
-
-### Funding Requests
-- `POST /api/funding-requests/create` - Create funding request
-- `GET /api/funding-requests/my-requests` - Get user's funding requests
+Visit `http://localhost:3000` to see your app!
 
 ## Firebase Collections
 
-### users
-- User profiles and authentication data
+The app uses these Firestore collections:
 
-### businesses
-- Business registration and verification data
-- Document URLs and metadata
+- **businesses** - Business profiles and investment details
+- **investments** - Individual investment records
+- **users** - User profiles and stats
+- **comments** - Business comments and discussions
 
-### fundingRequests
-- Business funding requests
-- Target amounts and terms
+## Deployment
 
-### investments
-- Investment records
-- Transaction hashes and amounts
+### Vercel (Recommended)
 
-### riskAssessments
-- AI-generated risk assessments
-- Risk scores and factors
+1. Push your code to GitHub
+2. Connect your repo to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy!
 
-## Development
+### Custom Domain
 
-### Adding New Features
+Update the domain in:
+- `src/app/layout.tsx` (OpenGraph URL)
+- Firebase Auth settings (authorized domains)
+- Farcaster app settings
 
-1. Update smart contracts if needed
-2. Create/update Firebase services
-3. Add API routes
-4. Create/update React components
-5. Update types and interfaces
+## Key Features Explained
 
-### Testing
+### Swipe Interface
+- Swipe right to invest $10 (configurable)
+- Swipe left to pass
+- Smooth animations with Framer Motion
 
-```bash
-# Run tests (when implemented)
-yarn test
+### Business Verification
+- Users can upload photos to verify businesses
+- Photos are stored in Firebase Storage
+- Verification images become part of business gallery
 
-# Test smart contracts
-npx hardhat test
-```
+### Investment Tracking
+- Real-time investment amounts
+- Expected returns calculation
+- Leaderboard based on total investments
 
-### Deployment
-
-1. Deploy smart contracts to mainnet
-2. Update environment variables
-3. Deploy frontend to Vercel/Netlify
-4. Configure Firebase for production
+### Mobile-First Design
+- Curved edges and modern UI
+- Optimized for Farcaster's mobile viewport
+- Touch-friendly interactions
 
 ## Contributing
 
@@ -197,64 +124,8 @@ npx hardhat test
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - feel free to use this for your own projects!
 
-## Support
+---
 
-For support and questions:
-- Create an issue on GitHub
-- Contact the development team
-
-## Roadmap
-
-- [ ] Mobile app development
-- [ ] Advanced risk assessment models
-- [ ] Multi-language support
-- [ ] Integration with more blockchains
-- [ ] Advanced analytics dashboard
-- [ ] Community governance features## Farcas
-ter Integration
-
-LocalLift is now integrated with Farcaster as a Mini App, allowing users to interact with the platform directly from Farcaster clients.
-
-### Farcaster Features
-
-- **Authentication**: Sign in with Farcaster using Quick Auth
-- **Sharing**: Share investment opportunities on Farcaster
-- **Embeds**: Rich embeds for sharing pages in Farcaster feeds
-- **Wallet Integration**: Use Farcaster wallet for transactions
-
-### Farcaster Setup
-
-1. Update `.env.local` with your Farcaster developer FID and mnemonic:
-```
-NEXT_PUBLIC_APP_DOMAIN=locallift.xyz
-FARCASTER_DEVELOPER_FID=your-fid
-FARCASTER_DEVELOPER_MNEMONIC=your-mnemonic
-```
-
-2. Sign your manifest using the [Farcaster Mini App Manifest Tool](https://farcaster.xyz/~/developers/mini-apps/manifest)
-
-3. Update the manifest in `public/.well-known/farcaster.json` with the signed account association
-
-### Testing as a Mini App
-
-1. Use the [Mini App Debug Tool](https://farcaster.xyz/~/developers/mini-apps/debug) to preview your app
-2. Enter your app URL and click "Preview"
-
-### Sharing on Farcaster
-
-Use the `FarcasterShareButton` component to enable sharing:
-
-```jsx
-import { FarcasterShareButton } from '@/components/farcaster/share-button'
-
-<FarcasterShareButton 
-  text="Check out this investment opportunity!"
-  url="https://locallift.xyz/invest?business=123"
-/>
-```
-
-### Farcaster Authentication
-
-The app automatically detects when it's running as a Mini App and enables Farcaster authentication.
+Built with ❤️ for the Farcaster ecosystem
