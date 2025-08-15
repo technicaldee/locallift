@@ -1,25 +1,117 @@
 {
-  "name": "Swipevest",
+  "name": "Swipevest - Swipe. Invest. Earn.",
   "short_name": "Swipevest",
-  "description": "Swipe. Invest. Earn. - Discover and invest in local businesses",
+  "description": "Discover and invest in local businesses with a simple swipe. Support your community while earning returns.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ec4899",
-  "orientation": "portrait",
+  "theme_color": "#6366f1",
+  "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
-      "src": "/icon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/icon-72x72.svg",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
     },
     {
-      "src": "/icon-512x512.png",
+      "src": "/icon-96x96.svg",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-128x128.svg",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-144x144.svg",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-152x152.svg",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-384x384.svg",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icon-512x512.svg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
     }
   ],
-  "categories": ["finance", "business"],
+  "categories": ["finance", "business", "productivity", "social"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Start Investing",
+      "short_name": "Invest",
+      "description": "Start swiping and investing in businesses",
+      "url": "/?shortcut=invest",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "My Portfolio",
+      "short_name": "Portfolio",
+      "description": "View your investment history",
+      "url": "/history?shortcut=portfolio",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Business Dashboard",
+      "short_name": "Business",
+      "description": "Manage your business profile",
+      "url": "/business?shortcut=dashboard",
+      "icons": [
+        {
+          "src": "/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
 }

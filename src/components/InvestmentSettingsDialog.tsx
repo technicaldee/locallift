@@ -3,22 +3,24 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { DollarSign } from 'lucide-react';
+import { useDisconnect } from 'wagmi';
 
 interface InvestmentSettings {
-  autoInvest: boolean;
   defaultAmount: number;
-  askEachTime: boolean;
+  riskLevel: 'low' | 'medium' | 'high';
+  autoInvest: boolean;
+  notifications: boolean;
 }
 
 interface InvestmentSettingsDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (settings: InvestmentSettings) => void;
-  currentSettings?: InvestmentSettings;
+  currentSettings?: any;
 }
 
 export function InvestmentSettingsDialog({ 
@@ -27,85 +29,119 @@ export function InvestmentSettingsDialog({
   onSave, 
   currentSettings 
 }: InvestmentSettingsDialogProps) {
-  const [settings, setSettings] = useState<InvestmentSettings>(
-    currentSettings || {
-      autoInvest: true,
-      defaultAmount: 10,
-      askEachTime: false,
-    }
-  );
+  const [settings, setSettings] = useState<InvestmentSettings>({
+    defaultAmount: currentSettings?.defaultAmount || 10,
+    riskLevel: currentSettings?.riskLevel || 'medium',
+    autoInvest: currentSettings?.autoInvest || false,
+    notifications: currentSettings?.notifications || true,
+  });
+  
+  const { disconnect } = useDisconnect();
 
   const handleSave = () => {
     onSave(settings);
     onClose();
   };
 
+  const handleDisconnect = () => {
+    disconnect();
+    onClose();
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm mx-auto">
+      <DialogContent className="max-w-md mx-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <DollarSign className="h-5 w-5 mr-2 text-indigo-500" />
-            Investment Settings
-          </DialogTitle>
+          <DialogTitle>Investment Settings</DialogTitle>
         </DialogHeader>
-
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="auto-invest">Auto-invest on swipe</Label>
-                <p className="text-sm text-slate-500">Automatically invest when you swipe right</p>
-              </div>
-              <Switch
-                id="auto-invest"
-                checked={settings.autoInvest}
-                onCheckedChange={(checked) => 
-                  setSettings(prev => ({ ...prev, autoInvest: checked }))
-                }
-              />
-            </div>
-
-            {settings.autoInvest && (
-              <>
-                <div>
-                  <Label htmlFor="default-amount">Default Investment Amount ($)</Label>
-                  <Input
-                    id="default-amount"
-                    type="number"
-                    value={settings.defaultAmount}
-                    onChange={(e) => 
-                      setSettings(prev => ({ ...prev, defaultAmount: Number(e.target.value) }))
-                    }
-                    min="1"
-                    max="1000"
-                    className="mt-1"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="ask-each-time">Ask amount each time</Label>
-                    <p className="text-sm text-slate-500">Prompt for amount on each investment</p>
-                  </div>
-                  <Switch
-                    id="ask-each-time"
-                    checked={settings.askEachTime}
-                    onCheckedChange={(checked) => 
-                      setSettings(prev => ({ ...prev, askEachTime: checked }))
-                    }
-                  />
-                </div>
-              </>
-            )}
+        
+        <div className="space-y-6 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="defaultAmount">Default Investment Amount (cUSD)</Label>
+            <Input
+              id="defaultAmount"
+              type="number"
+              min="1"
+              max="100"
+              value={settings.defaultAmount}
+              onChange={(e) => setSettings(prev => ({ 
+                ...prev, 
+                defaultAmount: parseInt(e.target.value) || 10 
+              }))}
+            />
+            <p className="text-xs text-slate-500">
+              Amount to invest when you swipe right (1-100 cUSD)
+            </p>
           </div>
 
-          <div className="flex space-x-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} className="flex-1">
+          <div className="space-y-2">
+            <Label htmlFor="riskLevel">Risk Level</Label>
+            <Select 
+              value={settings.riskLevel} 
+              onValueChange={(value: 'low' | 'medium' | 'high') => 
+                setSettings(prev => ({ ...prev, riskLevel: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low Risk</SelectItem>
+                <SelectItem value="medium">Medium Risk</SelectItem>
+                <SelectItem value="high">High Risk</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-slate-500">
+              Affects which businesses are shown to you
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="autoInvest">Auto-Invest</Label>
+              <p className="text-xs text-slate-500">
+                Automatically invest in highly-rated businesses
+              </p>
+            </div>
+            <Switch
+              id="autoInvest"
+              checked={settings.autoInvest}
+              onCheckedChange={(checked) => 
+                setSettings(prev => ({ ...prev, autoInvest: checked }))
+              }
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <Label htmlFor="notifications">Notifications</Label>
+              <p className="text-xs text-slate-500">
+                Get notified about investment updates
+              </p>
+            </div>
+            <Switch
+              id="notifications"
+              checked={settings.notifications}
+              onCheckedChange={(checked) => 
+                setSettings(prev => ({ ...prev, notifications: checked }))
+              }
+            />
+          </div>
+
+          <div className="pt-4 border-t space-y-3">
+            <Button 
+              onClick={handleSave}
+              className="w-full bg-indigo-500 hover:bg-indigo-600 text-white"
+            >
               Save Settings
+            </Button>
+            
+            <Button 
+              onClick={handleDisconnect}
+              variant="outline"
+              className="w-full text-red-600 border-red-200 hover:bg-red-50"
+            >
+              Disconnect Wallet
             </Button>
           </div>
         </div>

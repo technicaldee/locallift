@@ -39,7 +39,7 @@ export function BusinessDetailModal({
   if (!business) return null;
 
   const allImages = [business.imageUrl, ...business.gallery];
-  const daysLeft = Math.max(0, Math.ceil((business.expiresAt.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+  const daysLeft = Math.max(0, Math.ceil((business.updatedAt.getTime() + (30 * 24 * 60 * 60 * 1000) - Date.now()) / (1000 * 60 * 60 * 24)));
   const progressPercentage = (business.currentInvestment / business.requestedAmount) * 100;
 
   const nextImage = () => {
@@ -117,7 +117,7 @@ export function BusinessDetailModal({
             <h2 className="text-2xl font-bold text-slate-800 mb-2">{business.name}</h2>
             <div className="flex items-center text-sm text-slate-500 mb-4">
               <MapPin className="h-4 w-4 mr-1" />
-              {business.location.address}
+              Local Business
             </div>
           </div>
 
@@ -150,7 +150,7 @@ export function BusinessDetailModal({
             <div className="glass rounded-2xl p-4 text-center">
               <DollarSign className="h-5 w-5 text-indigo-500 mx-auto mb-2" />
               <p className="text-lg font-bold text-slate-800">
-                ${business.monthlyContribution}
+                ${Math.round(business.requestedAmount / 12)}
               </p>
               <p className="text-xs text-slate-500">Monthly Goal</p>
             </div>
@@ -173,18 +173,18 @@ export function BusinessDetailModal({
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-slate-500">Duration:</span>
-                <span className="text-slate-700">{business.campaignDuration} days</span>
+                <span className="text-slate-700">30 days</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Started:</span>
                 <span className="text-slate-700">
-                  {business.campaignStartDate.toLocaleDateString()}
+                  {business.createdAt.toLocaleDateString()}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Expires:</span>
                 <span className="text-slate-700">
-                  {business.expiresAt.toLocaleDateString()}
+                  {new Date(business.createdAt.getTime() + (30 * 24 * 60 * 60 * 1000)).toLocaleDateString()}
                 </span>
               </div>
             </div>

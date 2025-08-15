@@ -6,21 +6,36 @@ import { useAuth } from '@/contexts/auth-context'
 import { BusinessDashboard } from '@/components/business/business-dashboard'
 import { BusinessRegistrationForm } from '@/components/business/business-registration-form'
 import { useState, useEffect } from 'react'
-// Remove these imports if not used elsewhere
-// import { Metadata } from 'next'
-// import { generateFarcasterEmbed } from '@/lib/farcaster-utils'
+import { BottomNavigation } from '@/components/BottomNavigation'
+import { useRouter } from 'next/navigation'
 
-// Remove the generateMetadata function
-// export const generateMetadata = (): Metadata => { ... }
+import { ClientOnly } from '@/components/client-only';
 
 export default function BusinessPage() {
+  return (
+    <ClientOnly>
+      <BusinessPageContent />
+    </ClientOnly>
+  );
+}
+
+function BusinessPageContent() {
   const [mounted, setMounted] = useState(false)
+  const { user, isLoading } = useAuth()
+  const [showRegistration, setShowRegistration] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
   }, [])
-  const { user, isLoading } = useAuth()
-  const [showRegistration, setShowRegistration] = useState(false)
+
+  const handleTabChange = (tab: string) => {
+    if (tab === 'home') {
+      router.push('/invest');
+    } else {
+      router.push(`/${tab}`);
+    }
+  };
 
   if (!mounted || isLoading) {
     return (
@@ -73,8 +88,11 @@ export default function BusinessPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <BusinessDashboard />
+    <div className="flex flex-col h-screen">
+      <main className="flex-1 overflow-y-auto pb-20">
+        <BusinessDashboard />
+      </main>
+      <BottomNavigation activeTab="business" onTabChange={handleTabChange} />
     </div>
   )
 }

@@ -1,8 +1,8 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/contracts/BusinessRegistry.sol": {
-      "lastModificationDate": 1752884655421,
+    "/Users/edidiong/Desktop/locallift/contracts/BusinessRegistry.sol": {
+      "lastModificationDate": 1755166378372,
       "contentHash": "4608df10f84b39945f8c201752488a41",
       "sourceName": "contracts/BusinessRegistry.sol",
       "solcConfig": {
@@ -41,8 +41,8 @@
         "BusinessRegistry"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
-      "lastModificationDate": 1752883224738,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/access/AccessControl.sol": {
+      "lastModificationDate": 1755170130652,
       "contentHash": "d0e2c05f09a3aea7cd299bbd4a435ee2",
       "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
       "solcConfig": {
@@ -82,8 +82,8 @@
         "AccessControl"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/utils/Pausable.sol": {
-      "lastModificationDate": 1752883224752,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/utils/Pausable.sol": {
+      "lastModificationDate": 1755170131188,
       "contentHash": "0d47b53e10b1985efbb396f937626279",
       "sourceName": "@openzeppelin/contracts/utils/Pausable.sol",
       "solcConfig": {
@@ -121,82 +121,8 @@
         "Pausable"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
-      "lastModificationDate": 1752883224738,
-      "contentHash": "def1e8f7b6cac577cf2600655bf3bdf8",
-      "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "viaIR": true,
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.8.4"
-      ],
-      "artifacts": [
-        "IAccessControl"
-      ]
-    },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1752883224752,
-      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
-      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
-      "solcConfig": {
-        "version": "0.8.20",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "viaIR": true,
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "Context"
-      ]
-    },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1752883228529,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
+      "lastModificationDate": 1755170130939,
       "contentHash": "0906d06dca25210d4696dcef6dad2909",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -234,8 +160,82 @@
         "ERC165"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1752883228529,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/utils/Context.sol": {
+      "lastModificationDate": 1755170130854,
+      "contentHash": "67bfbc07588eb8683b3fd8f6f909563e",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/access/IAccessControl.sol": {
+      "lastModificationDate": 1755170130976,
+      "contentHash": "def1e8f7b6cac577cf2600655bf3bdf8",
+      "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.8.4"
+      ],
+      "artifacts": [
+        "IAccessControl"
+      ]
+    },
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
+      "lastModificationDate": 1755170130985,
       "contentHash": "7074c93b1ea0a122063f26ddd1db1032",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -271,8 +271,8 @@
         "IERC165"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/interfaces/IERC165.sol": {
-      "lastModificationDate": 1752883224738,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/interfaces/IERC165.sol": {
+      "lastModificationDate": 1755170130985,
       "contentHash": "947853028399b7de34bcc3704ee06e99",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC165.sol",
       "solcConfig": {
@@ -308,8 +308,8 @@
       ],
       "artifacts": []
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/interfaces/IERC1363.sol": {
-      "lastModificationDate": 1752883224738,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/interfaces/IERC1363.sol": {
+      "lastModificationDate": 1755170130984,
       "contentHash": "a7fd0f05e36b0d0a21c75340c9c639ec",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC1363.sol",
       "solcConfig": {
@@ -348,8 +348,8 @@
         "IERC1363"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/interfaces/IERC20.sol": {
-      "lastModificationDate": 1752883224739,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/interfaces/IERC20.sol": {
+      "lastModificationDate": 1755170130987,
       "contentHash": "68620db2da7583d9a4919096ac77f577",
       "sourceName": "@openzeppelin/contracts/interfaces/IERC20.sol",
       "solcConfig": {
@@ -385,8 +385,8 @@
       ],
       "artifacts": []
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1752883228528,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1755170130988,
       "contentHash": "9261adf6457863de3e9892f51317ec89",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -422,8 +422,8 @@
         "IERC20"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "lastModificationDate": 1752883229142,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "lastModificationDate": 1755170131189,
       "contentHash": "1fb9edee1d763745a62d0b1954998792",
       "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
       "solcConfig": {
@@ -462,8 +462,8 @@
         "SafeERC20"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/contracts/InvestmentPool.sol": {
-      "lastModificationDate": 1752884662446,
+    "/Users/edidiong/Desktop/locallift/contracts/InvestmentPool.sol": {
+      "lastModificationDate": 1755166378372,
       "contentHash": "99cf486afaeb3941892441958b05af80",
       "sourceName": "contracts/InvestmentPool.sol",
       "solcConfig": {
@@ -505,8 +505,8 @@
         "InvestmentPool"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
-      "lastModificationDate": 1752883224753,
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+      "lastModificationDate": 1755170131188,
       "contentHash": "190613e556d509d9e9a0ea43dc5d891d",
       "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
       "solcConfig": {
@@ -542,8 +542,8 @@
         "ReentrancyGuard"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/contracts/EscrowManager.sol": {
-      "lastModificationDate": 1752884669466,
+    "/Users/edidiong/Desktop/locallift/contracts/EscrowManager.sol": {
+      "lastModificationDate": 1755166378372,
       "contentHash": "e49f5928198ab1dd40c5b707e2785ebf",
       "sourceName": "contracts/EscrowManager.sol",
       "solcConfig": {
@@ -584,8 +584,8 @@
         "EscrowManager"
       ]
     },
-    "/Users/edidiong/Desktop/locallift-platform/locallift-platform/contracts/MockERC20.sol": {
-      "lastModificationDate": 1752884675414,
+    "/Users/edidiong/Desktop/locallift/contracts/MockERC20.sol": {
+      "lastModificationDate": 1755166378372,
       "contentHash": "c714a20d1767a83bce7d7de719df453b",
       "sourceName": "contracts/MockERC20.sol",
       "solcConfig": {
@@ -619,6 +619,87 @@
       ],
       "artifacts": [
         "MockERC20"
+      ]
+    },
+    "/Users/edidiong/Desktop/locallift/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
+      "lastModificationDate": 1755170131035,
+      "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "/Users/edidiong/Desktop/locallift/contracts/DirectInvestment.sol": {
+      "lastModificationDate": 1755248912850,
+      "contentHash": "39b993f5b3b24961e6788fdb561c126f",
+      "sourceName": "contracts/DirectInvestment.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DirectInvestment"
       ]
     }
   }

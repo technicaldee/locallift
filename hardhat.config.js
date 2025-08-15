@@ -18,6 +18,9 @@ module.exports = {
       url: "https://alfajores-forno.celo-testnet.org",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 44787,
+      timeout: 120000,
+      gas: 8000000,
+      gasPrice: 1000000000
     },
     celo: {
       url: "https://forno.celo.org",

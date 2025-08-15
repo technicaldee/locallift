@@ -11,7 +11,17 @@ import { useState, useEffect } from 'react'
 
 // Remove the generateMetadata function
 
+import { ClientOnly } from '@/components/client-only';
+
 export default function InvestPage() {
+  return (
+    <ClientOnly>
+      <InvestPageContent />
+    </ClientOnly>
+  );
+}
+
+function InvestPageContent() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {

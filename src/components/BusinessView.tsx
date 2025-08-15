@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { InvestmentService } from '@/lib/investmentService';
+import { useAccount } from 'wagmi';
+import { toast } from '@/hooks/use-toast';
 import { Upload, Building2, CheckCircle, Camera } from 'lucide-react';
 import { collection, addDoc, doc, getDoc, updateDoc, query, where, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -22,9 +25,11 @@ export function BusinessView() {
     description: '',
     requestedAmount: '',
     paybackPercentage: '',
+    walletAddress: '',
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const { user } = useFarcaster();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     if (user) {
@@ -36,7 +41,7 @@ export function BusinessView() {
     if (!user) return;
 
     try {
-      const userWallet = user.verifications[0] || `fid:${user.fid}`;
+      const userWallet = user.verifications?.[0] || `fid:${user.fid}`;
       const businessesRef = collection(db, 'businesses');
       const q = query(businessesRef, where('ownerWallet', '==', userWallet));
       const snapshot = await getDocs(q);
@@ -56,6 +61,7 @@ export function BusinessView() {
           description: businessData.description,
           requestedAmount: businessData.requestedAmount.toString(),
           paybackPercentage: businessData.paybackPercentage.toString(),
+          walletAddress: businessData.walletAddress || '',
         });
       }
     } catch (error) {
@@ -84,7 +90,7 @@ export function BusinessView() {
 
     setSubmitting(true);
     try {
-      const userWallet = user.verifications[0] || `fid:${user.fid}`;
+      const userWallet = user.verifications?.[0] || `fid:${user.fid}`;
       let imageUrl = business?.imageUrl || '';
 
       if (imageFile) {
@@ -96,6 +102,7 @@ export function BusinessView() {
         description: formData.description,
         requestedAmount: parseFloat(formData.requestedAmount),
         paybackPercentage: parseFloat(formData.paybackPercentage),
+        walletAddress: formData.walletAddress,
         imageUrl,
         ownerWallet: userWallet,
         currentInvestment: business?.currentInvestment || 0,
@@ -109,12 +116,51 @@ export function BusinessView() {
         // Update existing business
         const businessRef = doc(db, 'businesses', business.id);
         await updateDoc(businessRef, businessData);
+        
+        // Update business on contract if wallet address changed
+        if (formData.walletAddress !== business.walletAddress && isConnected) {
+          const contractResult = await InvestmentService.registerBusiness(
+            business.id,
+            formData.walletAddress,
+            formData.requestedAmount
+          );
+          
+          if (!contractResult.success) {
+            toast({
+              title: "Contract Update Failed",
+              description: contractResult.error || "Failed to update business on blockchain",
+              variant: "destructive",
+            });
+          }
+        }
       } else {
         // Create new business
-        await addDoc(collection(db, 'businesses'), {
+        const docRef = await addDoc(collection(db, 'businesses'), {
           ...businessData,
           createdAt: new Date(),
         });
+        
+        // Register business on contract
+        if (isConnected && formData.walletAddress) {
+          const contractResult = await InvestmentService.registerBusiness(
+            docRef.id,
+            formData.walletAddress,
+            formData.requestedAmount
+          );
+          
+          if (contractResult.success) {
+            toast({
+              title: "Business Registered! 🎉",
+              description: "Your business is now live and ready to receive investments",
+            });
+          } else {
+            toast({
+              title: "Registration Warning",
+              description: "Business saved but blockchain registration failed. You may need to register manually.",
+              variant: "destructive",
+            });
+          }
+        }
       }
 
       await loadUserBusiness();
@@ -237,6 +283,20 @@ export function BusinessView() {
                     required
                   />
                 </div>
+              </div>
+
+              <div>
+                <Label htmlFor="walletAddress">Wallet Address</Label>
+                <Input
+                  id="walletAddress"
+                  value={formData.walletAddress}
+                  onChange={(e) => setFormData(prev => ({ ...prev, walletAddress: e.target.value }))}
+                  placeholder="0x... (where you want to receive investments)"
+                  required
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  This is where investors' funds will be sent directly
+                </p>
               </div>
 
               <div>

@@ -9,7 +9,8 @@ import { HistoryView } from '@/components/HistoryView';
 import { BusinessView } from '@/components/BusinessView';
 import { VerifyDialog } from '@/components/VerifyDialog';
 import { CommentDialog } from '@/components/CommentDialog';
-import { InvestmentSuccessModal } from '@/components/InvestmentSuccessModal';
+// import { InvestmentSuccessModal } from '@/components/InvestmentSuccessModal';
+import { Toaster } from '@/components/ui/toast';
 import { Business } from '@/types';
 import { seedDatabase } from '@/lib/seedData';
 import { LocationSelector } from '@/components/LocationSelector';
@@ -19,9 +20,9 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
   const [verifyBusiness, setVerifyBusiness] = useState<Business | null>(null);
   const [commentBusiness, setCommentBusiness] = useState<Business | null>(null);
-  const [successBusiness, setSuccessBusiness] = useState<Business | null>(null);
-  const [investmentAmount, setInvestmentAmount] = useState(10);
-  const [userLocation, setUserLocation] = useState(null);
+  // const [successBusiness, setSuccessBusiness] = useState<Business | null>(null);
+  // const [investmentAmount, setInvestmentAmount] = useState(10);
+  const [userLocation, setUserLocation] = useState<{ address: string; lat: number; lng: number; radius: number; } | null>(null);
   const [investmentSettings, setInvestmentSettings] = useState({ amount: 100, riskLevel: 'medium' });
 
   useEffect(() => {
@@ -29,13 +30,13 @@ export default function Home() {
     seedDatabase();
   }, []);
 
-  const handleLocationSelect = (location: any) => {
+  const handleLocationSelect = (location: { address: string; lat: number; lng: number; radius: number; } | null) => {
     setUserLocation(location);
     // Save to user preferences
   };
 
-  const handleSettingsChange = (settings: any) => {
-    setInvestmentSettings(settings)
+  const handleSettingsChange = (settings: unknown) => {
+    setInvestmentSettings(settings as { amount: number; riskLevel: string });
   }
 
   const handleVerify = (business: Business) => {
@@ -104,6 +105,8 @@ export default function Home() {
             onClose={() => setCommentBusiness(null)}
           />
         )}
+        
+        <Toaster />
       </div>
     </div>
   );

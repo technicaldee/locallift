@@ -14,15 +14,26 @@ interface SwipeCardProps {
   onSwipe: (direction: 'left' | 'right', business: Business) => void;
   onVerify: (business: Business) => void;
   onComment: (business: Business) => void;
+  isInvesting?: boolean;
 }
 
-export function SwipeCard({ business, onSwipe, onVerify, onComment }: SwipeCardProps) {
+export function SwipeCard({ business, onSwipe, onVerify, onComment, isInvesting = false }: SwipeCardProps) {
   const [exitX, setExitX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
   const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
+  
+  // Color transforms for swipe feedback
+  const leftColor = useTransform(x, [-150, -50, 0], [1, 0.5, 0]);
+  const rightColor = useTransform(x, [0, 50, 150], [0, 0.5, 1]);
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
 
   const handleDragEnd = (event: any, info: PanInfo) => {
+    setIsDragging(false);
     const threshold = 100;
     
     if (info.offset.x > threshold) {
@@ -46,15 +57,58 @@ export function SwipeCard({ business, onSwipe, onVerify, onComment }: SwipeCardP
 
   return (
     <motion.div
-      className="absolute inset-0 cursor-grab active:cursor-grabbing"
+      className={cn(
+        "absolute inset-0 cursor-grab active:cursor-grabbing",
+        isInvesting && "pointer-events-none opacity-75"
+      )}
       style={{ x, rotate, opacity }}
-      drag="x"
+      drag={!isInvesting ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       animate={exitX !== 0 ? { x: exitX } : {}}
-      transition={{ duration: 0.3 }}
+      transition={{ 
+        duration: 0.3,
+        type: "spring",
+        stiffness: 300,
+        damping: 30
+      }}
     >
-      <Card className="h-full w-full overflow-hidden glass-card soft-shadow-lg">
+      <Card className={cn(
+        "h-full w-full overflow-hidden glass-card soft-shadow-lg transition-all duration-200",
+        isDragging && "scale-105 shadow-2xl",
+        isInvesting && "animate-pulse"
+      )}>
+        
+        {/* Swipe feedback overlays */}
+        <motion.div 
+          className="absolute inset-0 bg-red-500/20 flex items-center justify-center z-10"
+          style={{ opacity: leftColor }}
+        >
+          <div className="bg-red-500 text-white p-4 rounded-full">
+            <X className="h-8 w-8" />
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          className="absolute inset-0 bg-green-500/20 flex items-center justify-center z-10"
+          style={{ opacity: rightColor }}
+        >
+          <div className="bg-green-500 text-white p-4 rounded-full">
+            <Heart className="h-8 w-8" />
+          </div>
+        </motion.div>
+        
+        {/* Investment loading overlay */}
+        {isInvesting && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-20">
+            <div className="bg-white rounded-2xl p-6 text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+              <p className="text-sm font-medium">Processing Investment...</p>
+            </div>
+          </div>
+        )}
         <div className="relative h-[65%]">
           <img
             src={business.imageUrl}
@@ -122,7 +176,11 @@ export function SwipeCard({ business, onSwipe, onVerify, onComment }: SwipeCardP
               variant="outline"
               size="icon"
               onClick={handleSwipeLeft}
-              className="h-14 w-14 shadow-2xl rounded-full glass-button border-0 hover:bg-red-100"
+              disabled={isInvesting}
+              className={cn(
+                "h-14 w-14 shadow-2xl rounded-full glass-button border-0 hover:bg-red-100 transition-all",
+                isInvesting && "opacity-50 cursor-not-allowed"
+              )}
             >
               <X className="h-6 w-6 text-red-400" />
             </Button>
@@ -130,9 +188,17 @@ export function SwipeCard({ business, onSwipe, onVerify, onComment }: SwipeCardP
             <Button
               size="icon"
               onClick={handleSwipeRight}
-              className="h-14 w-14 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white soft-shadow"
+              disabled={isInvesting}
+              className={cn(
+                "h-14 w-14 rounded-full bg-indigo-500 hover:bg-indigo-600 text-white soft-shadow transition-all",
+                isInvesting && "opacity-50 cursor-not-allowed"
+              )}
             >
-              <Heart className="h-6 w-6" />
+              {isInvesting ? (
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              ) : (
+                <Heart className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </CardContent>

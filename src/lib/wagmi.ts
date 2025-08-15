@@ -1,16 +1,30 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
+import { createConfig, http } from 'wagmi';
 import { celo, celoAlfajores } from 'wagmi/chains';
+import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors';
 
-export const config = getDefaultConfig({
-  appName: 'Swipevest',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+// Create wagmi config
+export const config = createConfig({
   chains: [celoAlfajores, celo],
-  ssr: true,
+  connectors: [
+    injected(),
+    coinbaseWallet({
+      appName: 'Swipevest',
+      appLogoUrl: 'https://swipevest.app/logo.png',
+    }),
+    ...(projectId ? [walletConnect({
+      projectId,
+      metadata: {
+        name: 'Swipevest',
+        description: 'Swipe. Invest. Earn.',
+        url: 'https://swipevest.app',
+        icons: ['https://swipevest.app/logo.png'],
+      },
+    })] : []),
+  ],
+  transports: {
+    [celoAlfajores.id]: http(process.env.NEXT_PUBLIC_CELO_RPC_URL || 'https://alfajores-forno.celo-testnet.org'),
+    [celo.id]: http('https://forno.celo.org'),
+  },
 });
-
-export const CONTRACTS = {
-  BUSINESS_REGISTRY: process.env.NEXT_PUBLIC_BUSINESS_REGISTRY_ADDRESS as `0x${string}`,
-  INVESTMENT_POOL: process.env.NEXT_PUBLIC_INVESTMENT_POOL_ADDRESS as `0x${string}`,
-  ESCROW_MANAGER: process.env.NEXT_PUBLIC_ESCROW_MANAGER_ADDRESS as `0x${string}`,
-  CUSD_TOKEN: process.env.NEXT_PUBLIC_CUSD_TOKEN_ADDRESS as `0x${string}`,
-};

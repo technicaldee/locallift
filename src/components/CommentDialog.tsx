@@ -57,7 +57,7 @@ export function CommentDialog({ business, onClose }: CommentDialogProps) {
 
     setSubmitting(true);
     try {
-      const userWallet = user.verifications[0] || `fid:${user.fid}`;
+      const userWallet = user.verifications?.[0] || `fid:${user.fid}`;
       
       await addDoc(collection(db, 'comments'), {
         businessId: business.id,

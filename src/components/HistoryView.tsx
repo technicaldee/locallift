@@ -7,6 +7,8 @@ import { TrendingUp, TrendingDown, Clock } from 'lucide-react';
 import { collection, query, where, orderBy, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useFarcaster } from '@/hooks/useFarcaster';
+import { useAccount } from 'wagmi';
+import { InvestmentService } from '@/lib/investmentService';
 import { Investment } from '@/types';
 
 export function HistoryView() {
@@ -15,37 +17,60 @@ export function HistoryView() {
   const [totalInvested, setTotalInvested] = useState(0);
   const [totalEarnings, setTotalEarnings] = useState(0);
   const { user } = useFarcaster();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
-    if (user) {
+    if (isConnected && address) {
       loadInvestments();
     }
-  }, [user]);
+  }, [isConnected, address]);
 
   const loadInvestments = async () => {
-    if (!user) return;
+    if (!address) return;
 
     try {
-      const userWallet = user.verifications[0] || `fid:${user.fid}`;
+      // Load from blockchain
+      const blockchainHistory = await InvestmentService.getInvestorHistory(address);
+      
+      // Load from Firebase for additional metadata
       const investmentsRef = collection(db, 'investments');
       const q = query(
         investmentsRef,
-        where('investorWallet', '==', userWallet),
+        where('investorAddress', '==', address),
         orderBy('timestamp', 'desc')
       );
       
       const snapshot = await getDocs(q);
-      const investmentData = snapshot.docs.map(doc => ({
+      const firebaseData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         timestamp: doc.data().timestamp?.toDate(),
-      })) as Investment[];
+      }));
       
-      setInvestments(investmentData);
+      // Merge blockchain and Firebase data
+      const mergedInvestments = blockchainHistory.map((blockchainInv: any) => {
+        const firebaseInv = firebaseData.find(fb => 
+          fb.transactionHash === blockchainInv.transactionHash ||
+          (fb.businessId === blockchainInv.businessId && 
+           Math.abs(fb.amount - parseFloat(blockchainInv.amount)) < 0.01)
+        );
+        
+        return {
+          id: firebaseInv?.id || `${blockchainInv.businessId}-${blockchainInv.timestamp}`,
+          businessId: blockchainInv.businessId,
+          amount: parseFloat(blockchainInv.amount),
+          timestamp: new Date(blockchainInv.timestamp * 1000),
+          transactionHash: firebaseInv?.transactionHash,
+          expectedReturn: firebaseInv?.expectedReturn || parseFloat(blockchainInv.amount) * 1.15, // 15% default return
+          status: firebaseInv?.status || 'completed',
+        };
+      });
+      
+      setInvestments(mergedInvestments);
       
       // Calculate totals
-      const invested = investmentData.reduce((sum, inv) => sum + inv.amount, 0);
-      const earnings = investmentData.reduce((sum, inv) => sum + (inv.expectedReturn - inv.amount), 0);
+      const invested = mergedInvestments.reduce((sum, inv) => sum + inv.amount, 0);
+      const earnings = mergedInvestments.reduce((sum, inv) => sum + (inv.expectedReturn - inv.amount), 0);
       
       setTotalInvested(invested);
       setTotalEarnings(earnings);

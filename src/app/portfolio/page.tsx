@@ -30,7 +30,17 @@ export const dynamic = 'force-dynamic'
 //   }
 // }
 
+import { ClientOnly } from '@/components/client-only';
+
 export default function PortfolioPage() {
+  return (
+    <ClientOnly>
+      <PortfolioPageContent />
+    </ClientOnly>
+  );
+}
+
+function PortfolioPageContent() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {

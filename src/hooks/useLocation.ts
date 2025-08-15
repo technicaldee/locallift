@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface LocationData {
   address: string;
@@ -46,7 +46,7 @@ export function useLocation() {
               lat: latitude,
               lng: longitude,
             });
-          } catch (err) {
+          } catch (_err) {
             resolve({
               address: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
               lat: latitude,
@@ -54,7 +54,7 @@ export function useLocation() {
             });
           }
         },
-        (error) => {
+        (_error) => {
           reject(new Error('Failed to get location'));
         },
         {

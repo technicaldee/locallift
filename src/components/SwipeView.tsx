@@ -6,7 +6,11 @@ import { Business } from '@/types';
 import { collection, getDocs, addDoc, updateDoc, doc, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useFarcaster } from '@/hooks/useFarcaster';
-import { Loader2 } from 'lucide-react';
+import { LoadingCard } from '@/components/ui/loading';
+import { useAccount } from 'wagmi';
+import { InvestmentService } from '@/lib/investmentService';
+import { Analytics } from '@/lib/analytics';
+import { toast } from '@/hooks/use-toast';
 
 interface SwipeViewProps {
   onVerify: (business: Business) => void;
@@ -17,7 +21,9 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [investing, setInvesting] = useState(false);
   const { user } = useFarcaster();
+  const { address, isConnected } = useAccount();
 
   useEffect(() => {
     loadBusinesses();
@@ -43,32 +49,96 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   };
 
   const handleSwipe = async (direction: 'left' | 'right', business: Business) => {
-    if (direction === 'right' && user) {
-      // Invest in the business
-      const investmentAmount = 10; // Default investment amount
+    // Track swipe analytics
+    Analytics.trackSwipe(direction, business.id);
+    
+    if (direction === 'right' && isConnected && address) {
+      setInvesting(true);
+      
+      // Get investment amount from user settings or default
+      const userSettings = JSON.parse(localStorage.getItem('investment-settings') || '{}');
+      const investmentAmount = (userSettings.defaultAmount || 10).toString();
       
       try {
-        // Add investment record
-        await addDoc(collection(db, 'investments'), {
-          businessId: business.id,
-          investorWallet: user.verifications[0] || `fid:${user.fid}`,
-          amount: investmentAmount,
-          timestamp: new Date(),
-          expectedReturn: investmentAmount * (business.paybackPercentage / 100),
-        });
-
-        // Update business current investment
-        const businessRef = doc(db, 'businesses', business.id);
-        await updateDoc(businessRef, {
-          currentInvestment: increment(investmentAmount)
-        });
-
-        // Update user stats
-        const userWallet = user.verifications[0] || `fid:${user.fid}`;
-        // You might want to create/update user document here
+        // Check balance and allowance first
+        const balanceCheck = await InvestmentService.checkBalance(address, investmentAmount);
         
-      } catch (error) {
+        if (!balanceCheck.hasBalance) {
+          toast({
+            title: "Insufficient Balance",
+            description: `You need at least ${investmentAmount} cUSD to invest. Your balance: ${parseFloat(balanceCheck.balance).toFixed(2)} cUSD`,
+            variant: "destructive",
+          });
+          setInvesting(false);
+          return;
+        }
+
+        // Approve cUSD if needed
+        if (!balanceCheck.hasAllowance) {
+          toast({
+            title: "Approving cUSD",
+            description: "Please approve the transaction to allow investments...",
+          });
+          
+          const approvalResult = await InvestmentService.approvecUSD(investmentAmount);
+          if (!approvalResult.success) {
+            toast({
+              title: "Approval Failed",
+              description: approvalResult.error || "Failed to approve cUSD",
+              variant: "destructive",
+            });
+            setInvesting(false);
+            return;
+          }
+        }
+
+        // Make the investment
+        toast({
+          title: "Processing Investment",
+          description: "Sending your investment to the business...",
+        });
+
+        const investmentResult = await InvestmentService.invest(business.id, investmentAmount);
+        
+        if (investmentResult.success) {
+          // Update Firebase with investment record
+          await addDoc(collection(db, 'investments'), {
+            businessId: business.id,
+            investorAddress: address,
+            amount: parseFloat(investmentAmount),
+            timestamp: new Date(),
+            transactionHash: investmentResult.transactionHash,
+            status: 'completed'
+          });
+
+          // Update business current investment
+          await updateDoc(doc(db, 'businesses', business.id), {
+            currentInvestment: increment(parseFloat(investmentAmount))
+          });
+
+          // Track successful investment
+          Analytics.trackInvestment(business.id, parseFloat(investmentAmount));
+          
+          toast({
+            title: "Investment Successful! 🎉",
+            description: `You invested ${investmentAmount} cUSD in ${business.name}`,
+          });
+        } else {
+          toast({
+            title: "Investment Failed",
+            description: investmentResult.error || "Failed to process investment",
+            variant: "destructive",
+          });
+        }
+      } catch (error: any) {
         console.error('Error processing investment:', error);
+        toast({
+          title: "Investment Error",
+          description: error.message || "An unexpected error occurred",
+          variant: "destructive",
+        });
+      } finally {
+        setInvesting(false);
       }
     }
 
@@ -78,8 +148,10 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+      <div className="relative h-full p-4">
+        <div className="relative h-[90%] max-w-sm mx-auto">
+          <LoadingCard />
+        </div>
       </div>
     );
   }
@@ -104,28 +176,17 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   }
 
   const currentBusiness = businesses[currentIndex];
-  const nextBusiness = businesses[currentIndex + 1];
 
   return (
     <div className="relative h-full p-4">
       <div className="relative h-[90%] max-w-sm mx-auto">
-        {nextBusiness && (
-          <div className="absolute inset-0 scale-95 opacity-50">
-            <SwipeCard
-              business={nextBusiness}
-              onSwipe={() => {}}
-              onVerify={onVerify}
-              onComment={onComment}
-            />
-          </div>
-        )}
-        
         {currentBusiness && (
           <SwipeCard
             business={currentBusiness}
             onSwipe={handleSwipe}
             onVerify={onVerify}
             onComment={onComment}
+            isInvesting={investing}
           />
         )}
       </div>

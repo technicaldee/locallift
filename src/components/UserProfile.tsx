@@ -1,24 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useConnect, useDisconnect } from 'wagmi';
 import { useFarcaster } from '@/hooks/useFarcaster';
 import { useAccount } from 'wagmi';
 import { Settings } from 'lucide-react';
 import { InvestmentSettingsDialog } from './InvestmentSettingsDialog';
 
 interface UserProfileProps {
-  onSettingsChange: (settings: any) => void;
-  currentSettings?: any;
+  onSettingsChange: (settings: unknown) => void;
+  currentSettings?: unknown;
 }
 
 export function UserProfile({ onSettingsChange, currentSettings }: UserProfileProps) {
   const [showSettings, setShowSettings] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return (
+      <div className="flex items-center space-x-3">
+        <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    );
+  }
+
+  return <UserProfileContent onSettingsChange={onSettingsChange} currentSettings={currentSettings} />;
+}
+
+function UserProfileContent({ onSettingsChange, currentSettings }: UserProfileProps) {
+  const [showSettings, setShowSettings] = useState(false);
   const { user, isInFarcaster } = useFarcaster();
   const { address, isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
 
   if (isInFarcaster && user) {
     return (
@@ -85,10 +108,17 @@ export function UserProfile({ onSettingsChange, currentSettings }: UserProfilePr
     );
   }
 
+  const handleConnect = () => {
+    const injectedConnector = connectors.find(c => c.id === 'injected');
+    if (injectedConnector) {
+      connect({ connector: injectedConnector });
+    }
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="glass-button">
           Connect Wallet
         </Button>
       </DialogTrigger>
@@ -96,9 +126,14 @@ export function UserProfile({ onSettingsChange, currentSettings }: UserProfilePr
         <div className="flex flex-col items-center space-y-4 p-4">
           <h3 className="text-lg font-semibold">Connect Your Wallet</h3>
           <p className="text-sm text-slate-600 text-center">
-            Connect your wallet to start investing in local businesses
+            Connect your wallet to start investing in local businesses with cUSD on Celo
           </p>
-          <ConnectButton />
+          <Button 
+            onClick={handleConnect}
+            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white"
+          >
+            Connect Wallet
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,9 +1,9 @@
 {
   "network": "alfajores",
-  "businessRegistry": "0x485Da32813D1FD0c2a20786a0d3f3d9971444DE2",
-  "investmentPool": "0x107a13040d19aA71a44D2Ef1c925f927fDB13074",
-  "escrowManager": "0xE4CFf87076372D7bCd3d40C79502321eF1A228d7",
+  "businessRegistry": "0x2C62d5d818c7Ab966Ca6e5B2B7c7436f53DD2a9C",
+  "investmentPool": "0xCdD0E8d6960f0D68eA2495292B73404d35440086",
+  "escrowManager": "0x1c910A90Cc150303531f657231D08a1DA03bA1F3",
   "cUSDToken": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
   "deployer": "0x900f96DD68CA49001228348f1A2Cd28556FB62dd",
-  "timestamp": "2025-07-19T19:35:22.297Z"
+  "timestamp": "2025-08-14T14:25:12.408Z"
 }
