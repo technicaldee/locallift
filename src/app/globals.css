@@ -31,8 +31,8 @@
   }
 
   body {
-    @apply bg-slate-50 text-foreground;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    @apply bg-white text-foreground;
+    background: #ffffff;
     min-height: 100vh;
     font-feature-settings: "rlig" 1, "calt" 1;
   }

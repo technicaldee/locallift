@@ -63,29 +63,33 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-md mx-auto min-h-screen glass-card relative">
-        <header className="glass-nav text-slate-700 p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-center flex-1">
-              <h1 className="text-xl font-bold">Swipevest</h1>
-              <p className="text-sm text-slate-500">Swipe. Invest. Earn.</p>
+    <div className="min-h-screen bg-white">
+      <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col relative">
+        <header className="fixed top-0 left-0 right-0 z-50 glass-nav text-slate-700 p-4">
+          <div className="max-w-md mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="text-center flex-1">
+                <h1 className="text-xl font-bold">Swipevest</h1>
+                <p className="text-sm text-slate-500">Swipe. Invest. Earn.</p>
+              </div>
+              <LocationSelector 
+                onLocationSelect={handleLocationSelect}
+                currentLocation={userLocation}
+              />
             </div>
-            <LocationSelector 
-              onLocationSelect={handleLocationSelect}
-              currentLocation={userLocation}
-            />
-          </div>
-          <div className="mt-3">
-            <UserProfile 
-              onSettingsChange={handleSettingsChange}
-              currentSettings={investmentSettings}
-            />
+            <div className="mt-3">
+              <UserProfile 
+                onSettingsChange={handleSettingsChange}
+                currentSettings={investmentSettings}
+              />
+            </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-hidden" style={{ height: 'calc(100vh - 140px)' }}>
-          {renderContent()}
+        <main className="flex-1 overflow-auto pt-32 pb-20">
+          <div className="h-full">
+            {renderContent()}
+          </div>
         </main>
 
         <BottomNavigation activeTab={activeTab} onTabChange={setActiveTab} />

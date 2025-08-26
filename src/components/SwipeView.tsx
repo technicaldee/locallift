@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { SwipeCard } from './SwipeCard';
 import { Business } from '@/types';
-import { collection, getDocs, addDoc, updateDoc, doc, increment } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, doc, increment, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useFarcaster } from '@/hooks/useFarcaster';
 import { LoadingCard } from '@/components/ui/loading';
@@ -51,6 +51,11 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   const handleSwipe = async (direction: 'left' | 'right', business: Business) => {
     // Track swipe analytics
     Analytics.trackSwipe(direction, business.id);
+    
+    // Delay moving to next card to allow animation to complete
+    setTimeout(() => {
+      setCurrentIndex(prev => prev + 1);
+    }, 300); // Match the animation duration
     
     if (direction === 'right' && isConnected && address) {
       setInvesting(true);
@@ -116,6 +121,26 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
             currentInvestment: increment(parseFloat(investmentAmount))
           });
 
+          // Update or create user document for leaderboard
+          try {
+            const userWallet = address;
+            const userRef = doc(db, 'users', userWallet);
+            
+            // Use setDoc with merge to create or update user document
+            await setDoc(userRef, {
+              wallet: userWallet,
+              username: user?.username || user?.displayName || `User ${userWallet.slice(-6)}`,
+              avatar: user?.pfpUrl || '',
+              totalInvested: increment(parseFloat(investmentAmount)),
+              totalEarnings: 0, // Will be calculated based on returns
+              lastInvestment: new Date(),
+              updatedAt: new Date()
+            }, { merge: true });
+          } catch (userUpdateError) {
+            console.error('Error updating user stats:', userUpdateError);
+            // Don't fail the investment if user update fails
+          }
+
           // Track successful investment
           Analytics.trackInvestment(business.id, parseFloat(investmentAmount));
           
@@ -141,9 +166,6 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
         setInvesting(false);
       }
     }
-
-    // Move to next business
-    setCurrentIndex(prev => prev + 1);
   };
 
   if (loading) {
@@ -178,17 +200,19 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   const currentBusiness = businesses[currentIndex];
 
   return (
-    <div className="relative h-full p-4">
-      <div className="relative h-[90%] max-w-sm mx-auto">
-        {currentBusiness && (
-          <SwipeCard
-            business={currentBusiness}
-            onSwipe={handleSwipe}
-            onVerify={onVerify}
-            onComment={onComment}
-            isInvesting={investing}
-          />
-        )}
+    <div className="relative h-full overflow-hidden">
+      <div className="h-full overflow-auto p-4">
+        <div className="relative h-[calc(100vh-200px)] max-w-sm mx-auto">
+          {currentBusiness && (
+            <SwipeCard
+              business={currentBusiness}
+              onSwipe={handleSwipe}
+              onVerify={onVerify}
+              onComment={onComment}
+              isInvesting={investing}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

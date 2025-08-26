@@ -89,8 +89,9 @@ export function LeaderboardView() {
   }
 
   return (
-    <div className="p-4 pb-24">
-      <div className="max-w-md mx-auto">
+    <div className="h-full overflow-auto">
+      <div className="p-4 pb-24">
+        <div className="max-w-md mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold mb-2">Top Investors</h1>
           {userRank && (
@@ -148,6 +149,7 @@ export function LeaderboardView() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

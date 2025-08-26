@@ -95,8 +95,9 @@ export function HistoryView() {
   }
 
   return (
-    <div className="p-4 pb-24">
-      <div className="max-w-md mx-auto">
+    <div className="h-full overflow-auto">
+      <div className="p-4 pb-24">
+        <div className="max-w-md mx-auto">
         <h1 className="text-2xl font-bold mb-6 text-center">Investment History</h1>
 
         {/* Stats Card */}
@@ -166,6 +167,7 @@ export function HistoryView() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

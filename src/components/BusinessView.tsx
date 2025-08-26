@@ -79,9 +79,14 @@ export function BusinessView() {
   };
 
   const uploadImage = async (file: File): Promise<string> => {
-    const storageRef = ref(storage, `businesses/${Date.now()}_${file.name}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    return await getDownloadURL(snapshot.ref);
+    try {
+      const storageRef = ref(storage, `businesses/${Date.now()}_${file.name}`);
+      const snapshot = await uploadBytes(storageRef, file);
+      return await getDownloadURL(snapshot.ref);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw new Error('Failed to upload image. Please try again.');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,8 +190,9 @@ export function BusinessView() {
   }
 
   return (
-    <div className="p-4 pb-24">
-      <div className="max-w-md mx-auto">
+    <div className="h-full overflow-auto">
+      <div className="p-4 pb-24">
+        <div className="max-w-md mx-auto">
         <div className="text-center mb-6">
           <div className="h-16 w-16 glass rounded-full flex items-center justify-center mx-auto mb-4">
             <Building2 className="h-8 w-8 text-indigo-500" />
@@ -331,6 +337,7 @@ export function BusinessView() {
             {submitting ? 'Saving...' : business ? 'Update Business' : 'Create Business'}
           </Button>
         </form>
+        </div>
       </div>
     </div>
   );
