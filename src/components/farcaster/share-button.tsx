@@ -33,7 +33,7 @@ export function FarcasterShareButton({ text, url, className, children }: ShareBu
       try {
         // Use Farcaster compose cast action
         await sdk.actions.composeCast({
-          text: text || `Check out this investment opportunity on LocalLift!`,
+          text: text || `Check out this investment opportunity on Swipevest!`,
           embeds: [url]
         })
       } catch (error) {
@@ -44,8 +44,8 @@ export function FarcasterShareButton({ text, url, className, children }: ShareBu
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'LocalLift',
-            text: text || 'Check out this investment opportunity on LocalLift!',
+            title: 'Swipevest',
+            text: text || 'Check out this investment opportunity on Swipevest!',
             url
           })
         } catch (error) {

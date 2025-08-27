@@ -7,10 +7,10 @@
  */
 export function generateFarcasterEmbed({
   imageUrl,
-  buttonTitle = 'Open LocalLift',
+  buttonTitle = 'Open Swipevest',
   targetUrl,
-  appName = 'LocalLift',
-  splashImageUrl = 'https://locallift.xyz/logo.png',
+  appName = 'Swipevest',
+  splashImageUrl = 'https://swipevest.xyz/logo.png',
   splashBackgroundColor = '#0f172a'
 }: {
   imageUrl: string;
@@ -66,4 +66,26 @@ export async function isInFarcasterMiniApp(): Promise<boolean> {
     console.error('Error checking Farcaster environment:', error);
     return false;
   }
+}
+
+/**
+ * Remove splash screen after a few seconds for Farcaster miniapp
+ * This should be called when the app is ready
+ */
+export function removeSplashScreen(timeoutMs: number = 3000): void {
+  if (typeof window === 'undefined') return;
+  
+  setTimeout(() => {
+    // Hide splash screen elements
+    const splashElements = document.querySelectorAll('[data-splash-screen]');
+    splashElements.forEach(element => {
+      (element as HTMLElement).style.display = 'none';
+    });
+    
+    // Remove splash screen class from body if it exists
+    document.body.classList.remove('splash-active');
+    
+    // Dispatch custom event to notify app that splash is removed
+    window.dispatchEvent(new CustomEvent('splashScreenRemoved'));
+  }, timeoutMs);
 }

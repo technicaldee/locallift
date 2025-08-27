@@ -10,9 +10,9 @@ export function Navbar() {
           <div className="flex items-center space-x-8">
             <a href="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">LL</span>
+                <span className="text-white font-bold text-sm">SV</span>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">LocalLift</h1>
+              <h1 className="text-2xl font-bold text-gray-900">Swipevest</h1>
             </a>
             <div className="hidden md:flex items-center space-x-6">
               <a href="/invest" className="text-gray-700 hover:text-green-600 font-medium transition-colors">

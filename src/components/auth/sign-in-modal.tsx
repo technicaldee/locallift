@@ -25,7 +25,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     setIsLoading(true)
     try {
       const nonce = generateNonce()
-      const message = `Sign in to LocalLift\n\nAddress: ${address}\nNonce: ${nonce}`
+      const message = `Sign in to Swipevest\n\nAddress: ${address}\nNonce: ${nonce}`
 
       const signature = await signMessageAsync({ message })
 
@@ -61,7 +61,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl text-black font-semibold">Welcome to LocalLift</h2>
+          <h2 className="text-xl text-black font-semibold">Welcome to Swipevest</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="w-5 h-5" />
           </button>
@@ -70,7 +70,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         {step === 'connect' && !isConnected && (
           <div className="text-center">
             <p className="text-gray-600 mb-4">
-              Connect your wallet to get started with LocalLift
+              Connect your wallet to get started with Swipevest
             </p>
             <p className="text-sm text-gray-500">
               Please connect your wallet using the button in the header
@@ -81,7 +81,7 @@ export function SignInModal({ isOpen, onClose, onSuccess }: SignInModalProps) {
         {step === 'connect' && isConnected && (
           <div>
             <p className="text-gray-600 mb-4">
-              Choose your role on LocalLift:
+              Choose your role on Swipevest:
             </p>
             <div className="space-y-3 mb-6">
               <label className="flex items-center space-x-3 cursor-pointer">

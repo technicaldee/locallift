@@ -1,12 +1,12 @@
 {
   "miniapp": {
     "version": "1",
-    "name": "LocalLift",
-    "iconUrl": "https://locallift-kappa.vercel.app/logo.png",
-    "homeUrl": "https://locallift-kappa.vercel.app",
-    "imageUrl": "https://locallift-kappa.vercel.app/logo.png",
-    "buttonTitle": "Open LocalLift",
-    "splashImageUrl": "https://locallift-kappa.vercel.app/logo.png",
+    "name": "Swipevest",
+    "iconUrl": "https://swipevest-kappa.vercel.app/logo.png",
+    "homeUrl": "https://swipevest-kappa.vercel.app",
+    "imageUrl": "https://swipevest-kappa.vercel.app/logo.png",
+    "buttonTitle": "Open Swipevest",
+    "splashImageUrl": "https://swipevest-kappa.vercel.app/logo.png",
     "splashBackgroundColor": "#0f172a",
     "description": "Invest in local businesses with AI-powered risk assessment on Celo blockchain",
     "primaryCategory": "finance",
@@ -24,7 +24,7 @@
   },
   "accountAssociation": {
     "header": "eyJmaWQiOjEwOTU0NzUsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhmOThjQTM5ZGZmZUREOTQwNDhDQTY0RjVBQTA0QURiNDMzNTI0QTFhIn0",
-    "payload": "eyJkb21haW4iOiJsb2NhbGxpZnQta2FwcGEudmVyY2VsLmFwcCJ9",
+    "payload": "eyJkb21haW4iOiJzd2lwZXZlc3Qta2FwcGEudmVyY2VsLmFwcCJ9",
     "signature": "MHg3OTU2M2JlMWUzMzUwODgxMzEzMjYzMTg3ZDVhN2M0ZGQ2Yjc4NzgxYzQyYTk0YjRlNTE5MzI0MjgyZDQ3ODc2MGQwYTBkYTEzNjJhZDY2ZjIzNTUyM2VlZjQ5OGVmOTY5ZGI0NzY2ZDcyNzkzMDg3ZTg0YmVkZWUyZDZmMzdjNTFj"
   }
 }

@@ -146,8 +146,8 @@ export function BusinessCard({
         
         {/* Share Button */}
         <FarcasterShareButton 
-          text={`Check out ${business.name} on LocalLift! They're raising $${fundingRequest.targetAmount.toLocaleString()} for ${fundingRequest.purpose}.`}
-          url={`https://locallift.xyz/invest?business=${business.id}`}
+          text={`Check out ${business.name} on Swipevest! They're raising $${fundingRequest.targetAmount.toLocaleString()} for ${fundingRequest.purpose}.`}
+          url={`https://swipevest.xyz/invest?business=${business.id}`}
           className="w-full flex items-center justify-center border border-purple-300 text-purple-700 py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors font-medium"
         >
           <Share2 className="w-4 h-4 mr-2" />
