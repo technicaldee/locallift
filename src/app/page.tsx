@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { BottomNavigation } from '@/components/BottomNavigation';
 import { WelcomeDialog } from '@/components/WelcomeDialog';
 import { SwipeView } from '@/components/SwipeView';
+import { BusinessListView } from '@/components/BusinessListView';
 import { LeaderboardView } from '@/components/LeaderboardView';
 import { HistoryView } from '@/components/HistoryView';
 import { BusinessView } from '@/components/BusinessView';
@@ -11,13 +12,16 @@ import { VerifyDialog } from '@/components/VerifyDialog';
 import { CommentDialog } from '@/components/CommentDialog';
 // import { InvestmentSuccessModal } from '@/components/InvestmentSuccessModal';
 import { Toaster } from '@/components/ui/toast';
+import { Button } from '@/components/ui/button';
 import { Business } from '@/types';
 import { seedDatabase } from '@/lib/seedData';
 import { LocationSelector } from '@/components/LocationSelector';
 import { UserProfile } from '@/components/UserProfile';
+import { Settings, LayoutGrid, Layers } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('home');
+  const [viewMode, setViewMode] = useState<'swipe' | 'list'>('swipe');
   const [verifyBusiness, setVerifyBusiness] = useState<Business | null>(null);
   const [commentBusiness, setCommentBusiness] = useState<Business | null>(null);
   // const [successBusiness, setSuccessBusiness] = useState<Business | null>(null);
@@ -50,7 +54,9 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <SwipeView onVerify={handleVerify} onComment={handleComment} />;
+        return viewMode === 'swipe' 
+          ? <SwipeView onVerify={handleVerify} onComment={handleComment} />
+          : <BusinessListView onVerify={handleVerify} onComment={handleComment} />;
       case 'leaderboard':
         return <LeaderboardView />;
       case 'history':
@@ -58,7 +64,9 @@ export default function Home() {
       case 'business':
         return <BusinessView />;
       default:
-        return <SwipeView onVerify={handleVerify} onComment={handleComment} />;
+        return viewMode === 'swipe' 
+          ? <SwipeView onVerify={handleVerify} onComment={handleComment} />
+          : <BusinessListView onVerify={handleVerify} onComment={handleComment} />;
     }
   };
 
@@ -68,20 +76,49 @@ export default function Home() {
         <header className="fixed top-0 left-0 right-0 z-50 glass-nav text-slate-700 p-4">
           <div className="max-w-md mx-auto">
             <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <UserProfile 
+                  onSettingsChange={handleSettingsChange}
+                  currentSettings={investmentSettings}
+                />
+              </div>
               <div className="text-center flex-1">
                 <h1 className="text-xl font-bold">Swipevest</h1>
                 <p className="text-sm text-slate-500">Swipe. Invest. Earn.</p>
               </div>
-              <LocationSelector 
-                onLocationSelect={handleLocationSelect}
-                currentLocation={userLocation}
-              />
-            </div>
-            <div className="mt-3">
-              <UserProfile 
-                onSettingsChange={handleSettingsChange}
-                currentSettings={investmentSettings}
-              />
+              <div className="flex items-center space-x-2">
+                <LocationSelector 
+                  onLocationSelect={handleLocationSelect}
+                  currentLocation={userLocation}
+                />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    // Find the UserProfile component and trigger its settings
+                    const settingsEvent = new CustomEvent('openSettings');
+                    window.dispatchEvent(settingsEvent);
+                  }}
+                  className="glass-button"
+                >
+                  <Settings className="h-5 w-5 text-indigo-500" />
+                </Button>
+                {activeTab === 'home' && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setViewMode(viewMode === 'swipe' ? 'list' : 'swipe')}
+                    className="glass-button"
+                    title={viewMode === 'swipe' ? 'Switch to List View' : 'Switch to Swipe View'}
+                  >
+                    {viewMode === 'swipe' ? (
+                      <LayoutGrid className="h-5 w-5 text-indigo-500" />
+                    ) : (
+                      <Layers className="h-5 w-5 text-indigo-500" />
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </header>

@@ -3,14 +3,13 @@
 import { useState, useEffect } from 'react';
 import { SwipeCard } from './SwipeCard';
 import { Business } from '@/types';
-import { collection, getDocs, addDoc, updateDoc, doc, increment, setDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useFarcaster } from '@/hooks/useFarcaster';
 import { LoadingCard } from '@/components/ui/loading';
 import { useAccount } from 'wagmi';
-import { InvestmentService } from '@/lib/investmentService';
 import { Analytics } from '@/lib/analytics';
-import { toast } from '@/hooks/use-toast';
+import { BusinessDescriptionModal } from './BusinessDescriptionModal';
 
 interface SwipeViewProps {
   onVerify: (business: Business) => void;
@@ -21,7 +20,8 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [investing, setInvesting] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
+  const [showDescriptionModal, setShowDescriptionModal] = useState(false);
   const { user } = useFarcaster();
   const { address, isConnected } = useAccount();
 
@@ -52,120 +52,25 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
     // Track swipe analytics
     Analytics.trackSwipe(direction, business.id);
     
-    // Delay moving to next card to allow animation to complete
+    if (direction === 'right') {
+      // Show description modal instead of immediately investing
+      setSelectedBusiness(business);
+      setShowDescriptionModal(true);
+    } else {
+      // For left swipe, just move to next card
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+      }, 300); // Match the animation duration
+    }
+  };
+
+  const handleModalClose = () => {
+    setShowDescriptionModal(false);
+    setSelectedBusiness(null);
+    // Move to next card after modal closes
     setTimeout(() => {
       setCurrentIndex(prev => prev + 1);
-    }, 300); // Match the animation duration
-    
-    if (direction === 'right' && isConnected && address) {
-      setInvesting(true);
-      
-      // Get investment amount from user settings or default
-      const userSettings = JSON.parse(localStorage.getItem('investment-settings') || '{}');
-      const investmentAmount = (userSettings.defaultAmount || 10).toString();
-      
-      try {
-        // Check balance and allowance first
-        const balanceCheck = await InvestmentService.checkBalance(address, investmentAmount);
-        
-        if (!balanceCheck.hasBalance) {
-          toast({
-            title: "Insufficient Balance",
-            description: `You need at least ${investmentAmount} cUSD to invest. Your balance: ${parseFloat(balanceCheck.balance).toFixed(2)} cUSD`,
-            variant: "destructive",
-          });
-          setInvesting(false);
-          return;
-        }
-
-        // Approve cUSD if needed
-        if (!balanceCheck.hasAllowance) {
-          toast({
-            title: "Approving cUSD",
-            description: "Please approve the transaction to allow investments...",
-          });
-          
-          const approvalResult = await InvestmentService.approvecUSD(investmentAmount);
-          if (!approvalResult.success) {
-            toast({
-              title: "Approval Failed",
-              description: approvalResult.error || "Failed to approve cUSD",
-              variant: "destructive",
-            });
-            setInvesting(false);
-            return;
-          }
-        }
-
-        // Make the investment
-        toast({
-          title: "Processing Investment",
-          description: "Sending your investment to the business...",
-        });
-
-        const investmentResult = await InvestmentService.invest(business.id, investmentAmount);
-        
-        if (investmentResult.success) {
-          // Update Firebase with investment record
-          await addDoc(collection(db, 'investments'), {
-            businessId: business.id,
-            investorAddress: address,
-            amount: parseFloat(investmentAmount),
-            timestamp: new Date(),
-            transactionHash: investmentResult.transactionHash,
-            status: 'completed'
-          });
-
-          // Update business current investment
-          await updateDoc(doc(db, 'businesses', business.id), {
-            currentInvestment: increment(parseFloat(investmentAmount))
-          });
-
-          // Update or create user document for leaderboard
-          try {
-            const userWallet = address;
-            const userRef = doc(db, 'users', userWallet);
-            
-            // Use setDoc with merge to create or update user document
-            await setDoc(userRef, {
-              wallet: userWallet,
-              username: user?.username || user?.displayName || `User ${userWallet.slice(-6)}`,
-              avatar: user?.pfpUrl || '',
-              totalInvested: increment(parseFloat(investmentAmount)),
-              totalEarnings: 0, // Will be calculated based on returns
-              lastInvestment: new Date(),
-              updatedAt: new Date()
-            }, { merge: true });
-          } catch (userUpdateError) {
-            console.error('Error updating user stats:', userUpdateError);
-            // Don't fail the investment if user update fails
-          }
-
-          // Track successful investment
-          Analytics.trackInvestment(business.id, parseFloat(investmentAmount));
-          
-          toast({
-            title: "Investment Successful! 🎉",
-            description: `You invested ${investmentAmount} cUSD in ${business.name}`,
-          });
-        } else {
-          toast({
-            title: "Investment Failed",
-            description: investmentResult.error || "Failed to process investment",
-            variant: "destructive",
-          });
-        }
-      } catch (error: any) {
-        console.error('Error processing investment:', error);
-        toast({
-          title: "Investment Error",
-          description: error.message || "An unexpected error occurred",
-          variant: "destructive",
-        });
-      } finally {
-        setInvesting(false);
-      }
-    }
+    }, 300);
   };
 
   if (loading) {
@@ -209,11 +114,20 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
               onSwipe={handleSwipe}
               onVerify={onVerify}
               onComment={onComment}
-              isInvesting={investing}
             />
           )}
         </div>
       </div>
+      
+      {selectedBusiness && (
+        <BusinessDescriptionModal
+          business={selectedBusiness}
+          isOpen={showDescriptionModal}
+          onClose={handleModalClose}
+          onVerify={onVerify}
+          onComment={onComment}
+        />
+      )}
     </div>
   );
 }

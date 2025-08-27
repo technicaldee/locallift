@@ -1,6 +1,7 @@
 import { createConfig, http } from 'wagmi';
 import { celo, celoAlfajores } from 'wagmi/chains';
 import { coinbaseWallet, walletConnect, injected } from 'wagmi/connectors';
+import { farcasterMiniApp } from '@farcaster/miniapp-wagmi-connector';
 
 const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
@@ -8,6 +9,7 @@ const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 export const config = createConfig({
   chains: [celoAlfajores, celo],
   connectors: [
+    farcasterMiniApp(),
     injected(),
     coinbaseWallet({
       appName: 'Swipevest',

@@ -43,6 +43,17 @@ function UserProfileContent({ onSettingsChange, currentSettings }: UserProfilePr
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
+  useEffect(() => {
+    const handleOpenSettings = () => {
+      setShowSettings(true);
+    };
+
+    window.addEventListener('openSettings', handleOpenSettings);
+    return () => {
+      window.removeEventListener('openSettings', handleOpenSettings);
+    };
+  }, []);
+
   if (isInFarcaster && user) {
     return (
       <div className="flex items-center space-x-3">
@@ -57,14 +68,6 @@ function UserProfileContent({ onSettingsChange, currentSettings }: UserProfilePr
             {user.displayName || user.username}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowSettings(true)}
-          className="glass-button"
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
         
         <InvestmentSettingsDialog
           isOpen={showSettings}
@@ -89,14 +92,6 @@ function UserProfileContent({ onSettingsChange, currentSettings }: UserProfilePr
             {address.slice(0, 6)}...{address.slice(-4)}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setShowSettings(true)}
-          className="glass-button"
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
         
         <InvestmentSettingsDialog
           isOpen={showSettings}
@@ -109,7 +104,7 @@ function UserProfileContent({ onSettingsChange, currentSettings }: UserProfilePr
   }
 
   const handleConnect = () => {
-    const injectedConnector = connectors.find(c => c.id === 'injected');
+    const injectedConnector = connectors.find((c: any) => c.id === 'injected');
     if (injectedConnector) {
       connect({ connector: injectedConnector });
     }
