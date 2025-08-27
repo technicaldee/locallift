@@ -16,18 +16,26 @@ export function FarcasterProvider({ children }: { children: React.ReactNode }) {
         setIsMiniApp(isInMiniApp)
         
         if (isInMiniApp) {
-          // Hide splash screen
-          await sdk.actions.ready()
-          
-          // Add Farcaster connector to Wagmi
+          // Add Farcaster connector to Wagmi first
           if (config.connectors) {
             const hasConnector = config.connectors.some(
-              c => c.id === 'farcasterMiniApp'
+              (c: any) => c.id === 'farcasterMiniApp'
             )
             
             if (!hasConnector) {
               config.connectors.push(farcasterMiniApp())
             }
+          }
+          
+          // Wait for DOM to be ready and then hide splash screen
+          if (document.readyState === 'complete') {
+            await sdk.actions.ready()
+            console.log('Farcaster Mini App splash screen hidden')
+          } else {
+            window.addEventListener('load', async () => {
+              await sdk.actions.ready()
+              console.log('Farcaster Mini App splash screen hidden after load')
+            })
           }
         }
       } catch (error) {

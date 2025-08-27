@@ -69,23 +69,40 @@ export async function isInFarcasterMiniApp(): Promise<boolean> {
 }
 
 /**
+ * Initialize Farcaster Mini App and hide splash screen
+ * This should be called when the app is ready to display
+ */
+export async function initializeFarcasterApp(): Promise<void> {
+  if (typeof window === 'undefined') return;
+  
+  try {
+    // Check if we're in a Farcaster Mini App
+    const isInMiniApp = await isInFarcasterMiniApp();
+    
+    if (isInMiniApp) {
+      // Dynamically import the SDK to avoid server-side issues
+      const { sdk } = await import('@farcaster/miniapp-sdk');
+      
+      // Call ready() to hide the splash screen and display the app
+      await sdk.actions.ready();
+      
+      console.log('Farcaster Mini App initialized successfully');
+    }
+  } catch (error) {
+    console.error('Error initializing Farcaster Mini App:', error);
+  }
+}
+
+/**
+ * @deprecated Use initializeFarcasterApp() instead
  * Remove splash screen after a few seconds for Farcaster miniapp
  * This should be called when the app is ready
  */
 export function removeSplashScreen(timeoutMs: number = 3000): void {
+  console.warn('removeSplashScreen is deprecated. Use initializeFarcasterApp() instead.');
+  
   if (typeof window === 'undefined') return;
   
-  setTimeout(() => {
-    // Hide splash screen elements
-    const splashElements = document.querySelectorAll('[data-splash-screen]');
-    splashElements.forEach(element => {
-      (element as HTMLElement).style.display = 'none';
-    });
-    
-    // Remove splash screen class from body if it exists
-    document.body.classList.remove('splash-active');
-    
-    // Dispatch custom event to notify app that splash is removed
-    window.dispatchEvent(new CustomEvent('splashScreenRemoved'));
-  }, timeoutMs);
+  // For backward compatibility, call the new function
+  initializeFarcasterApp();
 }
