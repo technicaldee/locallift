@@ -75,7 +75,7 @@ export function BusinessListView({ onVerify, onComment }: BusinessListViewProps)
   }
 
   return (
-    <div className="p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+    <div className="p-4 space-y-4 max-h-[calc(100vh-160px)] overflow-y-auto">
       {businesses.map((business) => (
         <Card 
           key={business.id} 

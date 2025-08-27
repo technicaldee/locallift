@@ -123,7 +123,7 @@ export default function Home() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto pt-32 pb-20">
+        <main className="flex-1 overflow-auto pt-20 pb-20">
           <div className="h-full">
             {renderContent()}
           </div>

@@ -107,7 +107,7 @@ export function SwipeView({ onVerify, onComment }: SwipeViewProps) {
   return (
     <div className="relative h-full overflow-hidden">
       <div className="h-full overflow-auto p-4">
-        <div className="relative h-[calc(100vh-200px)] max-w-sm mx-auto">
+        <div className="relative h-[calc(100vh-160px)] max-w-sm mx-auto">
           {currentBusiness && (
             <SwipeCard
               business={currentBusiness}
